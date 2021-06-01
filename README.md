@@ -13,3 +13,10 @@ And, I am not a expert of VB.Net, so just ported VBA to VB.Net.
  * Performance tuning
  * Currently used many similar backgroundworker modal, need to refactoring.
  
+## Requirement for build
+ * Visual Studio 2019 Community or above
+ * .Net Framework 4.7.2
+ * Office Developer Tools for Visual Studio (VSTO)
+ * [Microsoft Visual Studio Installer Projects](https://marketplace.visualstudio.com/items?itemName=VisualStudioClient.MicrosoftVisualStudio2017InstallerProjects)
+
+ 
