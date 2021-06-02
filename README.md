@@ -1,6 +1,8 @@
 # Force.com Connector
-It is a .Net version of existing Excel Connector.
-And, I am not a expert of VB.Net, so just ported VBA to VB.Net.
+It is a .Net VSTO Addin of existing Excel Connector.
+And, I am not a expert of VB.Net, so need help from everyone.
+
+It is a Excel VSTO Addin, support Excel 2013, 2016 and Office 365 version of Excel.
 
 ![ForceConnector](./force-connector.png)
 
