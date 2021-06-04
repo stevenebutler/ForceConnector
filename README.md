@@ -1,8 +1,8 @@
 # Force.com Connector
 It is a .Net VSTO Addin of existing Excel Connector.
-And, I am not a expert of VB.Net, so need help from everyone.
+And, I am not an expert of VB.Net, so need help from everyone.
 
-It is a Excel VSTO Addin, support Excel 2013, 2016 and Office 365 version of Excel.
+It is an Excel VSTO Addin, support Excel 2013, 2016 and Office 365 version of Excel.
 
 ![ForceConnector](./force-connector.png)
 
@@ -17,7 +17,7 @@ It is a Excel VSTO Addin, support Excel 2013, 2016 and Office 365 version of Exc
 ## SObject Related Features
 * ... to be updated...
 * **Describe Sforce Object**
-  * It will be create the sheet(s) about sObject fields and specifications with translations
+  * It will be creating the sheet(s) about sObject fields and specifications with translations
 
 ## Translation Helper
 * **Download CustomLabel**
@@ -27,7 +27,7 @@ It is a Excel VSTO Addin, support Excel 2013, 2016 and Office 365 version of Exc
 * **Download CustomLabel Translation**
   * Download translations for Custom Labels using Metadata API
   * Before this action, you must download Custom Labels first
-  * Your org have to configure for translation
+  * Your org has to configure for translation
 
 * **Upsert CustomLabel**
   * You can create or update Custom Label(s)
