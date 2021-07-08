@@ -42,10 +42,20 @@ Public Class ThisAddIn
     Public Shared Roles As Dictionary(Of String, String)
     Public Shared Groups As Dictionary(Of String, String)
 
+    Private interopApi As SalesForceAddInApi
+
+    Protected Overrides Function RequestComAddInAutomationService() As Object
+        If interopApi Is Nothing Then
+            interopApi = New SalesForceAddInApi
+        End If
+        Return interopApi
+    End Function
+
     Private Sub ThisAddIn_Startup() Handles Me.Startup
         Globals.Ribbons.ForceRibbon.ribbonForceConnector.Label = ribbonBoxName & " (no logon user)"
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
         excelApp = Globals.ThisAddIn.Application
+
 
         UserNames = New Dictionary(Of String, String)
         RecordTypes = New Dictionary(Of String, String)
