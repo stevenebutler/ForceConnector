@@ -10,6 +10,10 @@ namespace ForceConnector
 {
     static class Operation
     {
+        public static bool RequireConfirmation = false;
+
+        public static DateTime LastCheckedLogin { get; internal set; }
+
         public static void QueryData()
         {
             try
@@ -157,7 +161,7 @@ namespace ForceConnector
                         api = apiVal;
                     }
                 }
-                
+
                 opr = Conversions.ToString(g_table.Cells[1, jw + 1].value); // the operator
                 object obVal = g_table.Cells[1, jw + 2].value;
                 vlu = Conversions.ToString(g_table.Cells[1, jw + 2].value); // the criteria value(s)
@@ -200,14 +204,14 @@ namespace ForceConnector
                 }
 
                 // 5.23 basic error check, 5.0 checks for this anyway but we know where the offending cell is
-                if (opr == "like" & field_obj.type == "picklist")
+                if (opr == "like" && field_obj.type == "picklist")
                 {
                     statusText = Conversions.ToString(Operators.ConcatenateObject(Operators.ConcatenateObject(Operators.ConcatenateObject(Operators.ConcatenateObject("like (or contains) operator in cell ", g_table.Cells[1, (jw + 1)].AddressLocal), " is not valid on picklist fields, "), Constants.vbCrLf), " use --> equals, not equals"));
                     goto errors;
                 }
 
                 // special case 'in' and a ref field
-                if ((opr == "in" | opr == "on") & field_obj.type == "reference")
+                if ((opr == "in" | opr == "on") && field_obj.type == "reference")
                 {
                     if (opr == "on")
                         oneeachrow = true;
@@ -235,7 +239,7 @@ namespace ForceConnector
                     // if values is empty and vlu is the nul string, still need to assemble the clause
                     string clause;
                     clause = "";
-                    if (Information.UBound((Array)values) < 0 & string.IsNullOrEmpty(vlu)) // case of one empty value
+                    if (Information.UBound((Array)values) < 0 && string.IsNullOrEmpty(vlu)) // case of one empty value
                     {
                         clause = field_obj.name + " " + opr + "''";
                         if (field_obj.type == "date") // special case, compare value is an empty date 5.49
@@ -251,7 +255,7 @@ namespace ForceConnector
                             string referTo = "";
                             str = vu2;
                             str = Util.escapeQueryString(str); // escape some chars
-                            if (field_obj.referenceTo is object & field_obj.referenceTo.Length > 0)
+                            if (field_obj.referenceTo is object && field_obj.referenceTo.Length > 0)
                             {
                                 referTo = field_obj.referenceTo[0];
                             }
@@ -303,18 +307,20 @@ namespace ForceConnector
         }
 
         // do the query and draw the rows we got back
-        public static long queryDataDraw(ref Excel.Application excelApp, ref Excel.Worksheet worksheet, ref Excel.Range g_header, ref Excel.Range g_body, ref Excel.Range g_ids, ref string g_objectType, ref RESTful.DescribeSObjectResult g_sfd, List<string> sels, string where, long outrow, long totals, ref System.ComponentModel.BackgroundWorker bgw)
+        public static long queryDataDraw(ref Excel.Application excelApp, ref Excel.Worksheet worksheet, ref Excel.Range g_header, ref Excel.Range g_body, ref Excel.Range g_ids, ref string g_objectType, ref RESTful.DescribeSObjectResult g_sfd, List<string> sels, string where, long outrow, ref System.ComponentModel.BackgroundWorker bgw)
         {
             RESTful.QueryResult queryData;
             string statusBarText = "Select Data From " + g_objectType;
             excelApp.StatusBar = Strings.Left(statusBarText, 128);
 
             int currentRow = 0;
+            int totals = 0;
             int startRow = g_body.Row;
             try
             {
                 queryData = RESTAPI.Query($"SELECT {string.Join(", ", sels)} FROM {g_objectType}{where}");
-                if (queryData.totalSize == 0)
+                totals = queryData.totalSize;
+                if (totals == 0)
                 {
                     // output something, like... "#N/F"
                     g_body.Cells[outrow, (g_ids.Column - g_body.Column + 1)].value = "#N/F";
@@ -374,58 +380,85 @@ namespace ForceConnector
             return true;
         }
 
-        public static void updateRange(ref Excel.Application excelApp, ref Excel.Range g_header, ref string g_objectType, ref Excel.Range g_start, ref RESTful.DescribeSObjectResult g_sfd, ref Excel.Range g_ids, ref Excel.Range todo, ref bool someFailed, ref long row_counter, ref long totals, ref System.ComponentModel.BackgroundWorker bgw)
+        public static void updateRange(
+            ref Excel.Application excelApp,
+            ref Excel.Worksheet worksheet,
+            ref Excel.Range g_header,
+            ref string g_objectType,
+            ref Excel.Range g_start,
+            ref RESTful.DescribeSObjectResult g_sfd,
+            ref Excel.Range g_ids,
+            ref Excel.Range todo,
+            ref bool someFailed,
+            ref long row_counter,
+            ref long totals,
+            List<RESTful.Field> headerFields,
+            Dictionary<string, RESTful.Field> fieldLabelMap,
+            Dictionary<string, RESTful.Field> fieldMap,
+            ref System.ComponentModel.BackgroundWorker bgw)
         {
-            var fieldMap = Util.getFieldMap(g_sfd.fields);
             var srMap = new Dictionary<string, RESTful.SaveResult>();
             var recordSet = new Dictionary<string, object>();
-            var idlist = new List<string>();
+            //var idlist = new List<string>();
             var rec = new List<Dictionary<string, object>>();
             RESTful.SaveResult[] srs;
             try
             {
-                foreach (Excel.Range c in excelApp.Intersect(g_ids, todo.EntireRow))
-                    idlist.Add(Util.FixID(Conversions.ToString(c.get_Value())));
-                if (idlist.Count == 0)
+                var idlist = objectids(ref excelApp, ref worksheet, ref g_ids, ref todo).Select(x => Util.FixID(x)).ToArray();
+                if (idlist.Length == 0)
                     goto done; // how ?
                 int percent = (int)Math.Round(row_counter / (double)totals * 100d);
                 bgw.ReportProgress(percent, "Building record block from row " + row_counter.ToString("N0"));
-                int i = 0;
-                foreach (var id in idlist.ToArray())
+
+                for (var i = 0; i < idlist.Length; i++)
                 {
+
                     recordSet = new Dictionary<string, object>();
                     recordSet.Add("attributes", new RESTful.Attributes(g_objectType));
-                    recordSet.Add("Id", id);
-                    foreach (Excel.Range j in todo.Columns)
+                    recordSet.Add("Id", idlist[i]);
+                    for (int j = 1; j <= headerFields.Count; j++)
                     {
+                        var field = headerFields[j - 1];
                         // field name
-                        string fld = Util.getAPINameFromCell((Excel.Range)g_header.Cells[1, Operators.SubtractObject(Operators.AddObject(1, j.Column), g_start.Column)]);
-                        var field = fieldMap[fld];
+                        string fld = field.name;// Util.getAPINameFromCell((Excel.Range)g_header.Cells[1, Operators.SubtractObject(Operators.AddObject(1, j.Column), g_start.Column)]);
+
                         // only updatable columns add to recordSet
                         if (!field.updateable)
                             goto nextcol;
-                        Excel.Range target;
-                        target = todo.get_Offset(i, Operators.SubtractObject(j.Column, todo.Column));
-                        recordSet.Add(fld, Util.toVBtype((Excel.Range)target.Cells[1, 1], field));
+                        Excel.Range target = todo.Cells[i + 1, j];// get_Offset(i, Operators.SubtractObject(j.Column, todo.Column));
+                        recordSet.Add(fld, Util.toVBtype(target, field));
                     nextcol:
                         ;
                     }
                     // if recordSet does not contains any updatable columns, cancel update
-                    if (rec.Count == 0 & recordSet.Count == 2)
+                    if (rec.Count == 0 && recordSet.Count == 2)
                     {
                         throw new Exception("No updatable columns selected, operation canceled.");
                     }
 
                     rec.Add(recordSet);
-                    i = i + 1;
                 }
 
                 srs = RESTAPI.UpdateRecords(rec.ToArray());
-                foreach (RESTful.SaveResult sr in srs)
+                if (srs.Length != idlist.Length)
+                {
+                    throw new Exception("Update response size doesn't match sent size");
+                }
+                for (int i = 0; i < srs.Length; i++)
+                {
+                    var sr = srs[i];
+                    // When an item isn't found in Salesforce, the response contains a null Id
+                    // In this case we repopulate with the ID we used on the way out.
+                    if (sr.id == null)
+                    {
+                        sr.id = idlist[i];
+                    }
                     srMap.Add(sr.id, sr);
-                percent = (int)Math.Round((row_counter + i) / (double)totals * 100d);
-                bgw.ReportProgress(percent, "Updating (" + i.ToString() + ") records from row " + row_counter.ToString("N0"));
-                row_counter = row_counter + i;
+                }
+                
+                percent = (int)Math.Round((row_counter + srs.Length) / (double)totals * 100d);
+                bgw.ReportProgress(percent, "Updating (" + srs.Length + ") records from row " + row_counter.ToString("N0"));
+                row_counter = row_counter + srs.Length;
                 updateResultHandler(ref excelApp, ref todo, ref someFailed, rec, srMap);
             }
             catch (Exception ex)
@@ -447,45 +480,45 @@ namespace ForceConnector
         {
             RESTful.SaveResult s;
             int i = 0;
+            todo.ClearComments();
+            todo.Interior.ColorIndex = 0;
             foreach (var r in rec.ToArray())
             {
                 s = srMap[Conversions.ToString(r["Id"])];
-                Excel.Range thisrow;
-                Excel.Range firstcel;
-                thisrow = excelApp.Intersect(todo.get_Offset(i, 1).EntireRow, todo);
-                firstcel = (Excel.Range)thisrow.Offset[0, 0].Cells[1, 1];
 
                 // find out what is wrong with this record
                 if (!s.success)
                 {
+                    Excel.Range thisrow;
+                    Excel.Range firstcel;
+                    thisrow = excelApp.Intersect(todo.get_Offset(i, 1).EntireRow, todo);
+                    firstcel = (Excel.Range)thisrow.Offset[0, 0].Cells[1, 1];
                     // Debug.Print r.ErrorMessage
                     // turns out that if one field fails, the entire row fails
                     thisrow.Interior.ColorIndex = 6;
-                    foreach (Excel.Range c in thisrow.Cells)
-                    {
-                        if (c.Comment is object)
-                            c.Comment.Delete();
-                    }
 
                     firstcel.AddComment();
                     string errMsg = "Update Row Failed:" + '\n';
                     foreach (RESTful.SalesforceError err in s.errors)
                         errMsg = Conversions.ToString(Operators.ConcatenateObject(Operators.ConcatenateObject(Operators.ConcatenateObject(Operators.ConcatenateObject(errMsg, err.statusCode), ", "), err.message), '\n'));
                     firstcel.Comment.Text(errMsg);
-                    firstcel.Comment.Shape.Height = 60f; // is this enough
+                    firstcel.Comment.Shape.Height = 100f; // is this enough
                     someFailed = true; // will message this later
                 }
                 else
                 {
+                    // Do nothing, since we pre-clear on the assumption the update will work
+                    // and we only need to do something with a range if something failed.
                     // clear out the color on this row only
                     // also remove any comments which may now be incorrect
                     // for this entire row, need to clear on each col of the selection
-                    thisrow.Interior.ColorIndex = 0;
-                    foreach (Excel.Range c in thisrow.Cells)
-                    {
-                        if (c.Comment is object)
-                            c.Comment.Delete();
-                    }
+                   
+                    //thisrow.Interior.ColorIndex = 0;
+                    //foreach (Excel.Range c in thisrow.Cells)
+                    //{
+                    //    if (c.Comment is object)
+                    //        c.Comment.Delete();
+                    //}
                 }
 
                 i = i + 1;
@@ -597,9 +630,23 @@ namespace ForceConnector
         // ******************************************************************************
         // * Insert Selected Rows Part
         // ******************************************************************************
-        public static void insertSelectedRange(ref Excel.Application excelApp, ref Excel.Worksheet worksheet, ref Excel.Range g_table, ref Excel.Range g_header, ref RESTful.DescribeSObjectResult g_sfd, ref string g_objectType, ref Excel.Range g_ids, ref Excel.Range todo, ref bool someFailed, ref long row_counter, ref long totals, ref System.ComponentModel.BackgroundWorker bgw)
+        public static void insertSelectedRange(ref Excel.Application excelApp,
+            ref Excel.Worksheet worksheet,
+            ref Excel.Range g_table,
+            ref Excel.Range g_header,
+            ref RESTful.DescribeSObjectResult g_sfd,
+            ref string g_objectType,
+            ref Excel.Range g_ids,
+            ref Excel.Range todo,
+            ref bool someFailed,
+            ref long row_counter,
+            ref long totals,
+            ref System.ComponentModel.BackgroundWorker bgw,
+            List<RESTful.Field> headerFields,
+            Dictionary<string, RESTful.Field> fieldLabelMap,
+            Dictionary<string, RESTful.Field> fieldMap
+            )
         {
-            var fieldMap = Util.getFieldMap(g_sfd.fields);
             Excel.Range xlSelection;
             var records = new List<object>();
             var recarray = new List<string>();
@@ -624,15 +671,16 @@ namespace ForceConnector
                     var loopTo = g_header.Count;
                     for (j = 1; j <= loopTo; j++)
                     {
-                        string name;
-                        name = Util.getAPINameFromCell((Excel.Range)g_header.Cells[1, j]);
+                        var fld = headerFields[j - 1];
+                        string name = fld.name;
+
                         if (name != "Id")
                         {
                             // don't overwrite the id on this row, needs to be empty when passed to create
                             // find the field, TODO i have a routine to find the field, could refactor this loop.
-                            var fld = fieldMap[name];
 
-                            // excelApp.StatusBar = "loading value for " & name
+
+                            // excelApp.StatusBar = "loading value for " && name
                             string celVal = Conversions.ToString(g_table.Cells[(rw.Row + 1 - g_table.Row), j].value);
                             if (!string.IsNullOrEmpty(celVal))
                             {
@@ -660,7 +708,7 @@ namespace ForceConnector
                     }
 
                     // if recordSet does not contains any updatable columns, cancel update
-                    if (records.Count == 0 & record.Count == 2)
+                    if (records.Count == 0 && record.Count == 1)
                     {
                         throw new Exception("No insertable columns selected, operation canceled.");
                     }
@@ -683,7 +731,7 @@ namespace ForceConnector
             }
             catch (Exception ex)
             {
-                throw new Exception("insertSelectedRange Exception" + Constants.vbCrLf + ex.Message);
+                throw new Exception("insertSelectedRange Exception" + Constants.vbCrLf + ex.Message, ex);
             }
 
         done:
@@ -754,46 +802,71 @@ namespace ForceConnector
         // ******************************************************************************
         // * Query Selected Rows Part
         // ******************************************************************************
-        public static bool querySelectedRow(ref Excel.Application excelApp, ref Excel.Worksheet worksheet, ref Excel.Range g_header, ref Excel.Range g_body, ref Excel.Range g_ids, ref string g_objectType, ref RESTful.DescribeSObjectResult g_sfd, List<string> sels, ref Excel.Range todo, ref long outrow, ref long totals, ref System.ComponentModel.BackgroundWorker bgw)
+        public static bool querySelectedRow(
+            ref Excel.Application excelApp,
+            ref Excel.Worksheet worksheet,
+            ref Excel.Range g_header,
+            ref Excel.Range g_body,
+            ref Excel.Range g_ids,
+            ref string g_objectType,
+            ref RESTful.DescribeSObjectResult g_sfd,
+            List<string> sels,
+            ref Excel.Range todo,
+            ref long outrow,
+            ref long totals,
+            ref System.ComponentModel.BackgroundWorker bgw,
+            List<RESTful.Field> headerFields,
+            Dictionary<string, RESTful.Field> fieldLabelMap,
+            Dictionary<string, RESTful.Field> fieldMap
+        )
         {
             try
             {
                 int percent = 0;
                 int i = 0;
-                string[] idlist;
-                idlist = new string[todo.Rows.Count];
+
                 percent = (int)Math.Round(outrow / (double)totals * 100d);
                 if (percent > 100)
                     percent = 100;
                 bgw.ReportProgress(percent, "Download " + todo.Count.ToString() + " records from row " + outrow.ToString("N0"));
-                foreach (Excel.Range rw in todo.Rows)
-                {
-                    idlist[i] = objectid(ref excelApp, ref worksheet, ref g_ids, rw.Row, true);
-                    i = i + 1;
-                }
+                var idlist = objectids(ref excelApp, ref worksheet, ref g_ids, ref todo);
+                //foreach (Excel.Range rw in todo.Rows)
+                //{
+                //    idlist[i] = objectid(ref excelApp, ref worksheet, ref g_ids, rw.Row, true);
+                //    i = i + 1;
+                //}
 
                 var qrs = RESTAPI.RetrieveRecords(g_objectType, idlist, sels.ToArray());
                 var sd = new Dictionary<string, object>();
-                foreach (object qr in qrs)
+                foreach (IDictionary x in qrs)
                 {
-                    if (qr is IDictionary x)
+                    if (x != null)
                     {
                         if (!sd.ContainsKey(Conversions.ToString(x["Id"])))
                         {
-                            sd.Add(Conversions.ToString(x["Id"]), qr);
+                            sd.Add(Conversions.ToString(x["Id"]), x);
                         }
                     }
                 }
 
                 foreach (Excel.Range rw in todo.Rows)
                 {
-                    var so = sd[Operation.objectid(ref excelApp, ref worksheet, ref g_ids, rw.Row, true)];
-                    formatWriteRow(ref worksheet, ref g_header, ref g_body, ref g_sfd, so as IDictionary, Conversions.ToInteger(Operators.SubtractObject(rw.Row, 2)), false);
-                    outrow = outrow + 1L;
-                    percent = (int)Math.Round(outrow / (double)totals * 100d);
-                    if (percent > 100)
-                        percent = 100;
-                    bgw.ReportProgress(percent, "Write record (" + outrow.ToString("N0") + " / " + totals.ToString("N0") + ")");
+                    var key = Operation.objectid(ref excelApp, ref worksheet, ref g_ids, rw.Row, true);
+                    if (sd.ContainsKey(key))
+                    {
+                        var so = sd[key];
+                        formatWriteRow(ref worksheet, ref g_header, ref g_body, ref g_sfd, so as IDictionary, Conversions.ToInteger(Operators.SubtractObject(rw.Row, 2)), headerFields, fieldLabelMap, fieldMap, false);
+                        outrow = outrow + 1L;
+                        percent = (int)Math.Round(outrow / (double)totals * 100d);
+                        if (percent > 100)
+                            percent = 100;
+                        bgw.ReportProgress(percent, "Write record (" + outrow.ToString("N0") + " / " + totals.ToString("N0") + ")");
+                    }
+                    else
+                    {
+                        Excel.Range badRange = worksheet.Cells[rw.Row, g_ids.Column];
+                        badRange.Font.ColorIndex = 7;
+                    }
                 }
 
                 sd = null;
@@ -1058,22 +1131,6 @@ namespace ForceConnector
             return default;
         }
 
-        public static List<string> getSelectionList(ref Excel.Range g_header)
-        {
-            List<string> sels = new List<string>();
-            foreach (Excel.Range c in g_header.Cells)
-            {
-                string apiname = Util.getAPIName(c.Comment.Text());
-
-                if (!string.IsNullOrEmpty(apiname))
-                {
-                    sels.Add(apiname);
-                }
-            }
-            return sels;
-
-        }
-
         public static string objectid(ref Excel.Application excelApp, ref Excel.Worksheet worksheet, ref Excel.Range g_ids, object row, bool quiet = true)
         {
             try
@@ -1094,7 +1151,7 @@ namespace ForceConnector
                     if (quiet)
                         Interaction.MsgBox("unrecognized object id >" + tempId + "<");
                 }
-                // Debug.Print "object id is " & tempId
+                // Debug.Print "object id is " && tempId
                 return tempId;
             }
             catch (Exception)
@@ -1102,7 +1159,39 @@ namespace ForceConnector
                 return string.Empty;
             }
         }
-
+        public static string[] objectids(ref Excel.Application excelApp, ref Excel.Worksheet worksheet, ref Excel.Range g_ids, ref Excel.Range todo)
+        {
+            try
+            {
+                var t = excelApp.Intersect(g_ids, todo.EntireRow);
+                if (t == null)
+                {
+                    return Array.Empty<string>();
+                }
+                var ids = t.Value;
+                if (ids is string)
+                {
+                    return new string[] { ids };
+                }
+                if (ids is object[,] idarr)
+                {
+                    List<string> allIds = new List<string>();
+                    for (int i = 1; i <= idarr.Length; i++)
+                    {
+                        allIds.Add(Conversions.ToString(idarr[i, 1]));
+                    }
+                    return allIds.ToArray();
+                }
+                else
+                {
+                    return Array.Empty<string>();
+                }
+            }
+            catch (Exception)
+            {
+                return Array.Empty<string>();
+            }
+        }
         public static void ApplyDataToRange(Excel.Worksheet worksheet, long startRow, int startColumn, List<string> fieldOrder, IDictionary[] objects, RESTful.DescribeSObjectResult g_sfd)
         {
             if (objects.Length <= 0)
@@ -1144,21 +1233,32 @@ namespace ForceConnector
 
         }
 
-        public static void formatWriteRow(ref Excel.Worksheet worksheet, ref Excel.Range g_header, ref Excel.Range g_body, ref RESTful.DescribeSObjectResult g_sfd, IDictionary so, int row, bool isInsert = true)
+        public static void formatWriteRow(
+            ref Excel.Worksheet worksheet,
+            ref Excel.Range g_header,
+            ref Excel.Range g_body,
+            ref RESTful.DescribeSObjectResult g_sfd,
+            IDictionary so,
+            int row,
+            List<RESTful.Field> headerFields,
+            Dictionary<string, RESTful.Field> fieldLabelMap,
+            Dictionary<string, RESTful.Field> fieldMap,
+            bool isInsert = true
+        )
         {
             var fields = Util.getFieldMap(g_sfd.fields);
             object maxRowHght;
             maxRowHght = worksheet.StandardHeight * 3d;
             for (int j = 1, loopTo = g_header.Count; j <= loopTo; j++)
             {
-                string name;
+                var field = headerFields[j - 1];
+                string name = field.name;
                 string fmt;
                 int rheight;
-                name = Util.getAPINameFromCell((Excel.Range)g_header.Cells[1, j]);
-                var field = fields[name];
+
 
                 // for query selected row, skip writing the Id column
-                if (!isInsert & field.type == "id")
+                if (!isInsert && field.type == "id")
                     goto nextcol;
                 fmt = Util.typeToFormat(field.type);
                 rheight = Conversions.ToInteger(g_body.Cells[row, j].RowHeight);  // before height

@@ -43,7 +43,10 @@ namespace ForceConnector
 
             try
             {
-                prs.CloseMainWindow();
+                if (!prs.HasExited)
+                {
+                    prs.CloseMainWindow();
+                }
             }
             catch (Exception ex)
             {

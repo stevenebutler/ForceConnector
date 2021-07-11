@@ -390,67 +390,91 @@
     </Compile>
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectList.resx">
       <DependentUpon>ObjectList.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Options.resx">
       <DependentUpon>Options.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="processCustomLabelDownload.resx">
       <DependentUpon>processCustomLabelDownload.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="processCustomLabelTranslationDownload.resx">
       <DependentUpon>processCustomLabelTranslationDownload.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="processCustomLabelTranslationUpload.resx">
       <DependentUpon>processCustomLabelTranslationUpload.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="processCustomLabelUpload.resx">
       <DependentUpon>processCustomLabelUpload.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="processDatabaseDeleteRows.resx">
       <DependentUpon>processDatabaseDeleteRows.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="processDatabaseInsertRows.resx">
       <DependentUpon>processDatabaseInsertRows.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="processDatabaseQuerySelectedRows.resx">
       <DependentUpon>processDatabaseQuerySelectedRows.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="processDatabaseQueryTable.resx">
       <DependentUpon>processDatabaseQueryTable.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="processDatabaseUpdateRows.resx">
       <DependentUpon>processDatabaseUpdateRows.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="processDatabaseUpdateRowsNew.resx">
       <DependentUpon>processDatabaseUpdateRowsNew.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="processDescribeCustomObject.resx">
       <DependentUpon>processDescribeCustomObject.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="processDescribeSObject.resx">
       <DependentUpon>processDescribeSObject.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="processObjectTranslationDownload.resx">
       <DependentUpon>processObjectTranslationDownload.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="processTranslationDownload.resx">
       <DependentUpon>processTranslationDownload.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="TranslationObjectSelect.resx">
       <DependentUpon>TranslationObjectSelect.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="WizardStep2.resx">
       <DependentUpon>WizardStep2.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="WizardStep3.resx">
       <DependentUpon>WizardStep3.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="WizardStep4.resx">
       <DependentUpon>WizardStep4.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </None>
     <None Include="app.config" />
     <None Include="Connected Services\MiniMETA\ForceConnector.MiniMETA.createMetadataResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -853,9 +877,11 @@
     <Compile Include="My Project\AssemblyInfo.cs" />
     <EmbeddedResource Include="ForceRibbon.resx">
       <DependentUpon>ForceRibbon.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Login.resx">
       <DependentUpon>Login.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 using Microsoft.VisualBasic.CompilerServices;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ForceConnector
 {
@@ -99,15 +100,15 @@ namespace ForceConnector
                     goto errors;
                 }
 
-                if (!Operation.setDataRanges(ref excelApp, ref worksheet, ref g_table, ref g_start, ref g_header, ref g_body, ref g_objectType, ref g_ids, ref g_sfd, ref statusText, out var headerFields, out _, out _))
+                if (!Operation.setDataRanges(ref excelApp, ref worksheet, ref g_table, ref g_start, ref g_header, ref g_body, ref g_objectType, ref g_ids, ref g_sfd, ref statusText, out var headerFields, out var fieldLabelMap, out var fieldMap))
                 {
                     goto errors;
                 }
 
                 bgw.ReportProgress(0, "Build Query String...");
-                List<string> sels = Operation.getSelectionList(ref g_header);
+                List<string> sels = headerFields.Select(x => x.name).ToList();
                 totals = Conversions.ToLong(excelApp.Selection.Rows.Count);
-                if (!RegDB.RegQueryBoolValue(ForceConnector.NOLIMITS) & totals > ForceConnector.maxRows)
+                if (!RegDB.RegQueryBoolValue(ForceConnector.NOLIMITS) && totals > ForceConnector.maxRows)
                 {
                     statusText = "too many rows selected " + totals.ToString("N0") + ", max is " + ForceConnector.maxRows.ToString("N0");
                     goto errors;
@@ -115,12 +116,15 @@ namespace ForceConnector
 
                 setControlText(btnAction, "Cancel");
                 setControlStatus(btnAction, true);
-                string msg = "You try to download " + totals.ToString("N0") + " records. Are you sure?";
-                var result = TopMostMessageBox.Show("Query Information", msg, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-                if (result == DialogResult.Cancel)
+                if (Operation.RequireConfirmation)
                 {
-                    statusText = "Cancel Query";
-                    goto cancel;
+                    string msg = "You try to download " + totals.ToString("N0") + " records. Are you sure?";
+                    var result = TopMostMessageBox.Show("Query Information", msg, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                    if (result == DialogResult.Cancel)
+                    {
+                        statusText = "Cancel Query";
+                        goto cancel;
+                    }
                 }
 
                 long row_pointer = Conversions.ToLong(excelApp.Selection.row); // row where we start to chunk
@@ -144,12 +148,17 @@ namespace ForceConnector
 
                     chunk.Interior.ColorIndex = (object)36; // show off...
                     excelApp.ScreenUpdating = false;
-                    bool localquerySelectedRow() { var argbgw = bgw; var ret = Operation.querySelectedRow(ref excelApp, ref worksheet, ref g_header, ref g_body, ref g_ids, ref g_objectType, ref g_sfd, sels, ref chunk, ref outrow, ref totals, ref argbgw); bgw = argbgw; return ret; }
+                    bool localquerySelectedRow() { 
+                        var argbgw = bgw; 
+                        var ret = Operation.querySelectedRow(ref excelApp, ref worksheet, ref g_header, ref g_body, ref g_ids, ref g_objectType, ref g_sfd, sels, ref chunk, ref outrow, ref totals, ref argbgw, headerFields, fieldLabelMap, fieldMap);
+                        bgw = argbgw; 
+                        return ret;
+                    }
 
                     if (!localquerySelectedRow())
                         goto done; // do it
                     excelApp.ScreenUpdating = true;
-                    System.Threading.Thread.Sleep(100);
+                  //  System.Threading.Thread.Sleep(100);
                     chunk.Interior.ColorIndex = (object)0;
 
                     // bgw.ReportProgress(percent, "Wrote " & chunk.Count.ToString() & " records from row " & outrow.ToString("N0"))
@@ -229,7 +238,6 @@ namespace ForceConnector
             else if (e.Cancelled)
             {
                 // ' otherwise if it was cancelled
-                // MessageBox.Show("Download cancelled!")
                 if (!string.IsNullOrEmpty(statusText))
                 {
                     lblMessage.Font = new System.Drawing.Font(lblMessage.Font, System.Drawing.FontStyle.Bold);
@@ -238,18 +246,21 @@ namespace ForceConnector
                 }
                 else
                 {
-                    lblMessage.Text = "Delete Cancelled!";
+                    lblMessage.Text = "Download Cancelled!";
                 }
             }
             else
             {
                 // ' otherwise it completed normally
-                // MessageBox.Show("Download completed!")
-                lblMessage.Text = "Delete completed!";
+                lblMessage.Text = "Download completed!";
             }
 
             btnAction.Text = "Done";
             btnAction.Enabled = true;
+            if (!Operation.RequireConfirmation)
+            {
+                btnAction.PerformClick();
+            }
         }
 
         // ******************************************************

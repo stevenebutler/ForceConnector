@@ -44,27 +44,20 @@ namespace ForceConnector
 
                 // ' call this method to start your asynchronous Task.
                 bgw.RunWorkerAsync();
-                goto done;
             }
             catch (Exception ex)
             {
                 statusText = ex.Message;
+                if (!string.IsNullOrEmpty(statusText))
+                {
+                    progressDownload.Value = 100;
+                    lblMessage.Font = new System.Drawing.Font(lblMessage.Font, System.Drawing.FontStyle.Bold);
+                    lblMessage.ForeColor = System.Drawing.Color.Red;
+                    lblMessage.Text = statusText;
+                    btnAction.Text = "Done";
+                    btnAction.Enabled = true;
+                }
             }
-
-        errors:
-            ;
-            if (!string.IsNullOrEmpty(statusText))
-            {
-                progressDownload.Value = 100;
-                lblMessage.Font = new System.Drawing.Font(lblMessage.Font, System.Drawing.FontStyle.Bold);
-                lblMessage.ForeColor = System.Drawing.Color.Red;
-                lblMessage.Text = statusText;
-                btnAction.Text = "Done";
-                btnAction.Enabled = true;
-            }
-
-        done:
-            ;
         }
 
         private void btnAction_Click(object sender, EventArgs e)
@@ -109,15 +102,15 @@ namespace ForceConnector
                 Excel.Range refIds = null;
                 string joinfield = "";
                 var oneeachrow = default(bool);
-                
+
                 bgw.ReportProgress(0, "Build Query String...");
                 if (!Operation.BuildQueryString(ref excelApp, ref g_table, ref g_start, ref g_header, ref refIds, ref joinfield, ref oneeachrow, fieldLabelMap, fieldMap, headerFields, out sels, ref where, ref statusText))
                 {
                     goto errors;
                 }
-
-                // Debug.Print "select " & sels & " from " & g_objectType
-                // Debug.Print " " & where
+                
+                // Debug.Print "select " && sels && " from " && g_objectType
+                // Debug.Print " " && where
 
                 // to support join, if we saw a "reference in range" we need to loop over this,
                 // otherwise call once for a normal query
@@ -131,7 +124,7 @@ namespace ForceConnector
                     foreach (Excel.Range c in refIds.Cells) // loop over a range to output a join
                     {
                         tmp = where;
-                        if (!string.IsNullOrEmpty(where) & Strings.Right(where, 4) != "AND ")
+                        if (!string.IsNullOrEmpty(where) && Strings.Right(where, 4) != "AND ")
                             tmp = where + " AND "; // 5.56
                         where = Conversions.ToString(Operators.ConcatenateObject(Operators.ConcatenateObject(tmp + joinfield + " = '", c.get_Value()), "'")); // use the ID from the reference colum in each query
                     }
@@ -146,28 +139,33 @@ namespace ForceConnector
                 }
 
 
-                RESTful.QueryResult qr;
-                qr = RESTAPI.Query($"SELECT COUNT(Id) ROWCOUNT FROM {g_objectType}{where}");
-                var total = qr.records[0] as IDictionary;
-                long rowCount = Conversions.ToLong(total["ROWCOUNT"]);
-                if (rowCount > ForceConnector.excelLimit)
-                {
-                    statusText = "Number of records exceed the limit of Excel, cancel the download.";
-                    goto errors;
-                }
-
                 setControlText(btnAction, "Cancel");
                 setControlStatus(btnAction, true);
-                string msg = "You try to download " + rowCount.ToString("N0") + " records. Are you sure?";
-                var result = TopMostMessageBox.Show("Query Information", msg, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-                if (result == DialogResult.Cancel)
-                {
-                    statusText = "Cancel Query";
-                    goto cancel;
-                }
 
+                if (Operation.RequireConfirmation)
+                {
+
+                    RESTful.QueryResult qr;
+                    qr = RESTAPI.Query($"SELECT COUNT(Id) ROWCOUNT FROM {g_objectType}{where}");
+                    var total = qr.records[0] as IDictionary;
+                    long rowCount = Conversions.ToLong(total["ROWCOUNT"]);
+                    if (rowCount > ForceConnector.excelLimit)
+                    {
+                        statusText = "Number of records exceed the limit of Excel, cancel the download.";
+                        goto errors;
+                    }
+
+                    string msg = "You try to download " + rowCount.ToString("N0") + " records. Are you sure?";
+                    var result = TopMostMessageBox.Show("Query Information", msg, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                    if (result == DialogResult.Cancel)
+                    {
+                        statusText = "Cancel Query";
+                        goto cancel;
+                    }
+                }
+                bgw.ReportProgress(0, "Preparing to query...");
                 var argbgw = bgw;
-                outrow = Operation.queryDataDraw(ref excelApp, ref worksheet, ref g_header, ref g_body, ref g_ids, ref g_objectType, ref g_sfd, sels, where, outrow, rowCount, ref argbgw);
+                outrow = Operation.queryDataDraw(ref excelApp, ref worksheet, ref g_header, ref g_body, ref g_ids, ref g_objectType, ref g_sfd, sels, where, outrow, ref argbgw);
                 bgw = argbgw;
                 if (outrow <= 1L)
                     setControlText(lblMessage, "No data returned for this Query");
@@ -257,6 +255,10 @@ namespace ForceConnector
 
             btnAction.Text = "Done";
             btnAction.Enabled = true;
+            if (!Operation.RequireConfirmation)
+            {
+                btnAction.PerformClick();
+            }
         }
 
         // ******************************************************

@@ -91,7 +91,7 @@ namespace ForceConnector
                 bgw.ReportProgress(0, "Please wait for initialize...");
                 var selectObjectsBox = new frmObjectList();
                 selectObjectsBox.ShowDialog();
-                if (selectObjectsBox.success & selectObjectsBox.objectList.Count > 0)
+                if (selectObjectsBox.success && selectObjectsBox.objectList.Count > 0)
                 {
                     objectList = selectObjectsBox.objectList.ToArray();
                     setControlText(btnAction, "Cancel");

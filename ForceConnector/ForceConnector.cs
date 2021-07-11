@@ -43,6 +43,7 @@ namespace ForceConnector
             var loginForm = new frmLogin();
             loginForm.ShowDialog();
             LoginToSalesforceRet = loginForm.getSuccess();
+            logined = LoginToSalesforceRet;
             loginForm.Dispose();
             return LoginToSalesforceRet;
         }
@@ -55,141 +56,59 @@ namespace ForceConnector
 
         public static void QueryTableWizard()
         {
-            try
-            {
-                if (!Util.checkSession())
-                {
-                    if (!LoginToSalesforce())
-                        throw new Exception("Login failed!");
-                }
-
-                if (Util.checkSession())
-                    TableWizard.QueryWizard();
-            }
-            catch (Exception ex)
-            {
-                Interaction.MsgBox(ex.Message + Constants.vbCrLf + ex.StackTrace, Title: "QueryTableWizard Exception");
-            }
+            CheckLoginAndAct(TableWizard.QueryWizard, "QueryTableWizard Exception");
         }
 
         public static void UpdateSelectedCells()
         {
-            try
-            {
-                if (!Util.checkSession())
-                {
-                    if (!LoginToSalesforce())
-                        throw new Exception("Login failed!");
-                }
+            CheckLoginAndAct(Operation.UpdateCells, "UpdateSelectedCells Exception");
 
-                if (Util.checkSession())
-                    Operation.UpdateCells();
-            }
-            catch (Exception ex)
-            {
-                Interaction.MsgBox(ex.Message + Constants.vbCrLf + ex.StackTrace, Title: "UpdateSelectedCells Exception");
-            }
         }
 
         public static void InsertSelectedRows()
         {
-            try
-            {
-                if (!Util.checkSession())
-                {
-                    if (!LoginToSalesforce())
-                        throw new Exception("Login failed!");
-                }
+            CheckLoginAndAct(Operation.InsertRows, "InsertSelectedRows Exception");
 
-                if (Util.checkSession())
-                    Operation.InsertRows();
-            }
-            catch (Exception ex)
-            {
-                Interaction.MsgBox(ex.Message + Constants.vbCrLf + ex.StackTrace, Title: "InsertSelectedRows Exception");
-            }
         }
 
         public static void QuerySelectedRows()
         {
-            try
-            {
-                if (!Util.checkSession())
-                {
-                    if (!LoginToSalesforce())
-                        throw new Exception("Login failed!");
-                }
-
-                if (Util.checkSession())
-                    Operation.QueryRows();
-            }
-            catch (Exception ex)
-            {
-                Interaction.MsgBox(ex.Message + Constants.vbCrLf + ex.StackTrace, Title: "QuerySelectedRows Exception");
-            }
+            CheckLoginAndAct(Operation.QueryRows, "QuerySelectedRows Exception");
         }
 
         public static void DescribeSforceObject()
         {
+            CheckLoginAndAct(DescribeCustomObject.DescribeSalesforceObjectsBySOAP, "DescribeSforceObject Exception");
+
+        }
+
+        private static void CheckLoginAndAct(Action act, String failMessage)
+        {
             try
             {
-                if (!Util.checkSession())
+                if (!logined)
                 {
                     if (!LoginToSalesforce())
+                    {
                         throw new Exception("Login failed!");
+                    }
                 }
-
-                if (Util.checkSession())
-                {
-                    // If ThisAddIn.usingRESTful Then
-                    // Call DescribeSalesforceObjectsByREST()
-                    // Else
-                    DescribeCustomObject.DescribeSalesforceObjectsBySOAP();
-                    // End If
-                }
+                act();
             }
             catch (Exception ex)
             {
-                Interaction.MsgBox(ex.Message + Constants.vbCrLf + ex.StackTrace, Title: "DescribeSforceObject Exception");
+                Interaction.MsgBox(ex.Message + Constants.vbCrLf + ex.StackTrace, Title: failMessage);
             }
         }
 
         public static void QueryTableData()
         {
-            try
-            {
-                if (!Util.checkSession())
-                {
-                    if (!LoginToSalesforce())
-                        throw new Exception("Login failed!");
-                }
-
-                if (Util.checkSession())
-                    Operation.QueryData();
-            }
-            catch (Exception ex)
-            {
-                Interaction.MsgBox(ex.Message + Constants.vbCrLf + ex.StackTrace, Title: "QueryTableData Exception");
-            }
+            CheckLoginAndAct(Operation.QueryData, "QueryTableData");
         }
 
         public static void DeleteSelectedRecords()
         {
-            try
-            {
-                if (!Util.checkSession())
-                {
-                    if (!LoginToSalesforce())
-                        throw new Exception("Login failed!");
-                }
-
-                if (Util.checkSession())
-                    Operation.DeleteRecords();
-            }
-            catch (Exception ex)
-            {
-                Interaction.MsgBox(ex.Message + Constants.vbCrLf + ex.StackTrace, Title: "DeleteSelectedRecords Exception");
-            }
+            CheckLoginAndAct(Operation.DeleteRecords, "DeleteSelectedRecords Exception");
         }
 
         public static void OptionsForm()
@@ -207,6 +126,7 @@ namespace ForceConnector
 
         public static void LogoutFrom()
         {
+            logined = false;
             if (Util.checkSession())
             {
                 MessageBox.Show("Session alived, logout from Salesforce!");

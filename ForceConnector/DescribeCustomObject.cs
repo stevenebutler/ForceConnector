@@ -97,7 +97,7 @@ namespace ForceConnector
             }
             catch (Exception ex)
             {
-                throw new Exception("getFieldMetadatas Exception");
+                throw new Exception("getFieldMetadatas Exception", ex);
             }
         }
 

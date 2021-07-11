@@ -119,7 +119,7 @@ namespace ForceConnector
                     string value = obj["name"];
                     if (label.IndexOf(search, 0, StringComparison.CurrentCultureIgnoreCase) > -1 | value.IndexOf(search, 0, StringComparison.CurrentCultureIgnoreCase) > -1)
                     {
-                        if (chkStandard.Checked & standards.Contains(value))
+                        if (chkStandard.Checked && standards.Contains(value))
                         {
                             var line = new ListViewItem();
                             line.Text = label;
@@ -127,7 +127,7 @@ namespace ForceConnector
                             withBlock.Items.Add(line);
                         }
 
-                        if (chkCustom.Checked & Conversions.ToBoolean(obj["custom"]) == true)
+                        if (chkCustom.Checked && Conversions.ToBoolean(obj["custom"]) == true)
                         {
                             var line = new ListViewItem();
                             line.Text = label;
@@ -137,7 +137,7 @@ namespace ForceConnector
 
                         if (chkSystem.Checked)
                         {
-                            if (!standards.Contains(value) & Conversions.ToBoolean(obj["custom"]) == false)
+                            if (!standards.Contains(value) && Conversions.ToBoolean(obj["custom"]) == false)
                             {
                                 var line = new ListViewItem();
                                 line.Text = label;

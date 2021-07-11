@@ -14,14 +14,14 @@ namespace ForceConnector
     {
         public static bool checkSession()
         {
-            if (!string.IsNullOrEmpty(ThisAddIn.accessToken) & !string.IsNullOrEmpty(ThisAddIn.id))
+            if (!string.IsNullOrEmpty(ThisAddIn.accessToken) && !string.IsNullOrEmpty(ThisAddIn.id))
             {
                 try
                 {
-                    var result = RESTAPI.getConnectionInfo();
+                    //var result = RESTAPI.getConnectionInfo();
                     return true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return false;
                 }
@@ -32,36 +32,34 @@ namespace ForceConnector
 
         public static bool IsRequired(RESTful.Field fld)
         {
-            bool IsRequiredRet = default;
-            IsRequiredRet = fld.name != "Id" & fld.nillable == false & fld.defaultedOnCreate == false & fld.createable == true;
-            return IsRequiredRet;
+            return fld.name != "Id" && !fld.nillable && !fld.defaultedOnCreate && fld.createable;
         }
 
         public static bool IsNameField(RESTful.Field fld)
         {
             bool IsNameFieldRet = default;
-            IsNameFieldRet = fld.nameField & !IsRequired(fld) & !fld.custom & fld.updateable;
+            IsNameFieldRet = fld.nameField && !IsRequired(fld) && !fld.custom && fld.updateable;
             return IsNameFieldRet;
         }
 
         public static bool IsStandard(RESTful.Field fld)
         {
             bool IsStandardRet = default;
-            IsStandardRet = !IsNameField(fld) & !IsRequired(fld) & !fld.custom & fld.updateable;
+            IsStandardRet = !IsNameField(fld) && !IsRequired(fld) && !fld.custom && fld.updateable;
             return IsStandardRet;
         }
 
         public static bool IsCustom(RESTful.Field fld)
         {
             bool IsCustomRet = default;
-            IsCustomRet = fld.custom & fld.updateable & !IsRequired(fld);
+            IsCustomRet = fld.custom && fld.updateable && !IsRequired(fld);
             return IsCustomRet;
         }
 
         public static bool IsReadOnly(RESTful.Field fld)
         {
             bool IsReadOnlyRet = default;
-            IsReadOnlyRet = fld.name != "Id" & !fld.updateable & !IsRequired(fld);
+            IsReadOnlyRet = fld.name != "Id" && !fld.updateable && !IsRequired(fld);
             return IsReadOnlyRet;
         }
 
@@ -181,7 +179,7 @@ namespace ForceConnector
         // 
         // adjust the format of the value for types as expected by API
         // sfQueryValueFormat
-        public static string QueryValueFormat(object typ, object vlu, object obVal)
+        public static string QueryValueFormat(string typ, object vlu, object obVal)
         {
 
             switch (typ)
@@ -189,6 +187,7 @@ namespace ForceConnector
                 case "datetime":
                 case "date":
                     {
+                        string dateFormat = (typ == "date") ? "yyyy-MM-dd" : "yyyy-MM-ddTHH:mm:ss.000Z";
                         // 
                         // 5.12 allow strings like
                         // today, today - 1 , today - 150, today + 30
@@ -214,10 +213,10 @@ namespace ForceConnector
                             }
 
                             vlu = DateAndTime.DateAdd("d", incr, today);
-                            return Strings.Format(vlu, "yyyy-MM-ddTHH:mm:ss.000Z");
+                            return Strings.Format(vlu, dateFormat);
                         } // 5.12 end
 
-                        return Strings.Format(obVal, "yyyy-MM-ddTHH:mm:ss.000Z");
+                        return Strings.Format(obVal, dateFormat);
                     }
 
                 case "double":
@@ -232,8 +231,6 @@ namespace ForceConnector
                         {
                             return Conversion.Val(vlu) + ".0";
                         }
-
-                        break;
                     }
 
                 case "boolean":
@@ -269,7 +266,7 @@ namespace ForceConnector
         /// <returns></returns>
         public static Dictionary<string, RESTful.Field> getFieldLabelMap(RESTful.Field[] field)
         {
-            var fields = new Dictionary<string, RESTful.Field>();
+            var fields = new Dictionary<string, RESTful.Field>(StringComparer.OrdinalIgnoreCase);
             var blackList = new HashSet<string>();
             foreach (RESTful.Field fld in field)
             {
@@ -308,10 +305,10 @@ namespace ForceConnector
                 case "date":
                 case "datetime": // re-written for 5.66
                     {
-                        typeToFormatRet = "yyyy-mm-dd";
+                        typeToFormatRet = "yyyy-MM-dd";
                         if (sfType == "datetime")
                         {
-                            typeToFormatRet = typeToFormatRet + " hh:mm"; // 5.15
+                            typeToFormatRet = typeToFormatRet + " HH:mm:ss"; // 5.15
                         }
 
                         break;
@@ -385,12 +382,11 @@ namespace ForceConnector
         public static object toVBtype(Range cel, RESTful.Field field)
         {
             object toVBtypeRet = default;
-            // special case, must set value to an uninitialized variant
-            // to indicate to the COM toolkit that we want to "nil" the field
-            // toolkit translates this to passing "fieldsToNull" in the actual SOAP request
-            if (string.IsNullOrEmpty(Conversions.ToString(cel.get_Value())))
+            object val = cel.Value;
+            // empty cell is null - special case
+            if (string.IsNullOrEmpty(Conversions.ToString(val)))
             {
-                return Microsoft.VisualBasic.Constants.vbNullChar;
+                return null;
             }
 
             switch (field.type ?? "")
@@ -398,14 +394,14 @@ namespace ForceConnector
                 case "int":
                     {
                         int i;
-                        i = (int)Math.Round(Conversion.Int(Conversion.Val(cel.get_Value())));
+                        i = (int)Math.Round(Conversion.Int(Conversion.Val(val)));
                         toVBtypeRet = i;
                         break;
                     }
 
                 case "percent":
                     {
-                        toVBtypeRet = (object)Conversion.Val(cel.get_Value()); // normal case
+                        toVBtypeRet = (object)Conversion.Val(val); // normal case
                         break;
                     }
 
@@ -413,7 +409,8 @@ namespace ForceConnector
                 case "currency":
                     {
                         // val() does not use i18n conventions, use CDbl instead, 6.08
-                        toVBtypeRet = (object)Conversions.ToDouble(cel.get_Value());  // normal case
+                        
+                        toVBtypeRet = Conversions.ToDouble(val);  // normal case
                                                                                       // 6.01 truncate to the number of digits, Field3 likes it's numbers formated
                         if (field.scale == 0)
                         {
@@ -421,10 +418,10 @@ namespace ForceConnector
                         }
                         else // If (field.Scale > 0) Then
                         {
-                            int z = Strings.InStr(Conversions.ToString(cel.get_Value()), Conversions.ToString(ForceConnector.excelApp.get_International(XlApplicationInternational.xlDecimalSeparator)));
+                            int z = Strings.InStr(Conversions.ToString(val), Conversions.ToString(ThisAddIn.excelApp.International[XlApplicationInternational.xlDecimalSeparator]));
                             if (z > 0)  // need to remove any extra decimal places
                             {
-                                toVBtypeRet = (object)Conversions.ToDouble(Strings.Left(Conversions.ToString(cel.get_Value()), z + field.scale));
+                                toVBtypeRet = Conversions.ToDouble(Strings.Left(Conversions.ToString(val), z + field.scale));
                             }
                         }
 
@@ -434,14 +431,18 @@ namespace ForceConnector
                 case "datetime":
                 case "date":
                     {
-                        if (cel.get_Value().GetType().Name == "DateTime")
+                        if (val is DateTime dt)
                         {
-                            DateTime dt = Conversions.ToDate(cel.get_Value().ToString());
-                            toVBtypeRet = dt.ToString("s");
+                            string typeToFormat = "yyyy-MM-dd";
+                            if (field.type == "datetime")
+                            {
+                                typeToFormat = "s";
+                            }
+                            toVBtypeRet = dt.ToString(typeToFormat);
                         }
                         else
                         {
-                            toVBtypeRet = cel.get_Value();
+                            toVBtypeRet = val;
                         }
 
                         break;
@@ -449,7 +450,7 @@ namespace ForceConnector
 
                 case "boolean":
                     {
-                        toVBtypeRet = cel.get_Value();
+                        toVBtypeRet = val;
                         break;
                     }
 
@@ -460,15 +461,14 @@ namespace ForceConnector
                         // need to map a name into the actual ID prior to passing to update
                         // ref_id routine will return the passed in value if we don't map
                         // the ReferenceTo type provided (User,Group,Profile... etc) as a fallback
-                        toVBtypeRet = cel.get_Value();
-                        if (Strings.Len(toVBtypeRet) == 15 | Strings.Len(toVBtypeRet) == 18)
+                        toVBtypeRet = val;
+                        if (field.referenceTo.Length > 0)
                         {
-                            if (field.referenceTo.Length > 0)
-                                toVBtypeRet = Util.NameToId(Conversions.ToString(cel.get_Value()), field.referenceTo[0]); // how to check for multi reference type???????????????
+                            toVBtypeRet = Util.NameToId(Conversions.ToString(val), field.referenceTo[0]);
                         }
-                        else
+                        if (!(Strings.Len(toVBtypeRet) == 15 || Strings.Len(toVBtypeRet) == 18))
                         {
-                            throw new Exception("Invalid Id format for " + field.name);
+                            throw new Exception($"Invalid Id format for {field.name} has value {val} translated to {toVBtypeRet}");
                         } // all other types (so far),  work with this "string" type
 
                         break;
@@ -476,7 +476,7 @@ namespace ForceConnector
 
                 default:
                     {
-                        toVBtypeRet = "" + cel.get_Value().ToString();
+                        toVBtypeRet = "" + val.ToString();
                         break;
                     }
             }
@@ -502,7 +502,7 @@ namespace ForceConnector
             if (!RegDB.RegQueryBoolValue(ForceConnector.USE_REFERENCE))
                 return name_string;
             string[] names;
-            object[] records;
+            IDictionary[] records;
 
             switch (Strings.Len(name_string))
             {
@@ -524,29 +524,33 @@ namespace ForceConnector
                         {
                             return ThisAddIn.UserNames[name_string];
                         }
-
-                        names = Strings.Split(name_string, " ");
-                        records = QueryAll("SELECT FirstName, LastName, Id FROM " + "User WHERE FirstName = '" + names[0] + "' AND LastName = '" + names[1] + "'");
-                        foreach (var currentRecord in records)
+                        if (ThisAddIn.UserNames.Count == 0)
                         {
-                            if (currentRecord is IDictionary record)
+                            records = QueryAll("SELECT Name, Id FROM User");
+                            foreach (IDictionary record in records)
                             {
                                 var refId = record["Id"];
-                                ThisAddIn.UserNames.Add(Conversions.ToString(refId), name_string);
+                                ThisAddIn.UserNames.Add(Conversions.ToString(refId), Conversions.ToString(record["Name"]));
                                 ThisAddIn.UserNames.Add(name_string, Conversions.ToString(refId));
-                            }
-                        }
 
-                        if (ThisAddIn.UserNames.ContainsKey(name_string))
-                        {
-                            return ThisAddIn.UserNames[name_string];
+                            }
+
+
+                            if (ThisAddIn.UserNames.ContainsKey(name_string))
+                            {
+                                return ThisAddIn.UserNames[name_string];
+                            }
+                            else
+                            {
+                                return name_string;
+                            }
                         }
                         else
                         {
                             return name_string;
                         }
 
-                        break;
+
                     }
 
                 // use of this type of reference should be controled by an option
@@ -562,15 +566,11 @@ namespace ForceConnector
                         }
 
                         records = QueryAll("SELECT Id, Name FROM RecordType WHERE Name = '" + name_string + "'");
-                        foreach (var currentRecord1 in records)
+                        foreach (var record in records)
                         {
-                            if (currentRecord1 is IDictionary record)
-                            {
-
-                                var refId = record["Id"];
-                                ThisAddIn.RecordTypes.Add(Conversions.ToString(refId), name_string);
-                                ThisAddIn.RecordTypes.Add(name_string, Conversions.ToString(refId));
-                            }
+                            var refId = record["Id"];
+                            ThisAddIn.RecordTypes.Add(Conversions.ToString(refId), name_string);
+                            ThisAddIn.RecordTypes.Add(name_string, Conversions.ToString(refId));
                         }
 
                         if (ThisAddIn.RecordTypes.ContainsKey(name_string))
@@ -582,7 +582,7 @@ namespace ForceConnector
                             return name_string;
                         }
 
-                        break;
+
                     }
 
                 case "Profile":
@@ -593,15 +593,11 @@ namespace ForceConnector
                         }
 
                         records = QueryAll("SELECT Id, Name FROM Profile WHERE Name = '" + name_string + "'");
-                        foreach (var currentRecord2 in records)
+                        foreach (var record in records)
                         {
-                            if (currentRecord2 is IDictionary record)
-                            {
-
-                                var refId = record["Id"];
-                                ThisAddIn.Profiles.Add(Conversions.ToString(refId), name_string);
-                                ThisAddIn.Profiles.Add(name_string, Conversions.ToString(refId));
-                            }
+                            var refId = record["Id"];
+                            ThisAddIn.Profiles.Add(Conversions.ToString(refId), name_string);
+                            ThisAddIn.Profiles.Add(name_string, Conversions.ToString(refId));
                         }
 
                         if (ThisAddIn.Profiles.ContainsKey(name_string))
@@ -613,7 +609,7 @@ namespace ForceConnector
                             return name_string;
                         }
 
-                        break;
+
                     }
 
                 case "Group":
@@ -624,16 +620,13 @@ namespace ForceConnector
                         }
 
                         records = QueryAll("SELECT Id, Name FROM Group WHERE Name = '" + name_string + "'");
-                        foreach (var currentRecord3 in records)
+                        foreach (var record in records)
                         {
-                            if (currentRecord3 is IDictionary record)
-                            {
+                            var refId = record["Id"];
 
-                                var refId = record["Id"];
+                            ThisAddIn.Groups.Add(Conversions.ToString(refId), name_string);
+                            ThisAddIn.Groups.Add(name_string, Conversions.ToString(refId));
 
-                                ThisAddIn.Groups.Add(Conversions.ToString(refId), name_string);
-                                ThisAddIn.Groups.Add(name_string, Conversions.ToString(refId));
-                            }
                         }
 
                         if (ThisAddIn.Groups.ContainsKey(name_string))
@@ -645,7 +638,7 @@ namespace ForceConnector
                             return name_string;
                         }
 
-                        break;
+
                     }
 
                 case "UserRole":
@@ -656,16 +649,13 @@ namespace ForceConnector
                         }
 
                         records = QueryAll("SELECT Id, Name FROM UserRole WHERE Name = '" + name_string + "'");
-                        foreach (var currentRecord4 in records)
+                        foreach (var record in records)
                         {
-                            if (currentRecord4 is IDictionary record)
-                            {
+                            var refId = record["Id"];
 
-                                var refId = record["Id"];
+                            ThisAddIn.Roles.Add(Conversions.ToString(refId), name_string);
+                            ThisAddIn.Roles.Add(name_string, Conversions.ToString(refId));
 
-                                ThisAddIn.Roles.Add(Conversions.ToString(refId), name_string);
-                                ThisAddIn.Roles.Add(name_string, Conversions.ToString(refId));
-                            }
                         }
 
                         if (ThisAddIn.Roles.ContainsKey(name_string))
@@ -678,7 +668,7 @@ namespace ForceConnector
                             // and we arrive here for not a ref_to at all in 5.46
                         } // 5.37 don't know how to map this type, so restore the value passed in
 
-                        break;
+
                     }
 
                 default:
@@ -738,7 +728,7 @@ namespace ForceConnector
                             return objectid;
                         }
 
-                        break;
+
                     }
 
                 case "012": // RecordType
@@ -770,7 +760,7 @@ namespace ForceConnector
                             return objectid;
                         }
 
-                        break;
+
                     }
 
                 case "00e": // Profile
@@ -802,7 +792,7 @@ namespace ForceConnector
                             return objectid;
                         }
 
-                        break;
+
                     }
 
                 case "00G": // Group
@@ -838,7 +828,7 @@ namespace ForceConnector
                             return objectid;
                         }
 
-                        break;
+
                     }
 
                 case "00E": // UserRole
@@ -870,7 +860,7 @@ namespace ForceConnector
                             return objectid;
                         }
 
-                        break;
+
                     }
 
                 default:
@@ -880,41 +870,32 @@ namespace ForceConnector
             }
         }
 
-        public static object[] QueryAll(string q)
+        public static IDictionary[] QueryAll(string q)
         {
             var qrs = RESTAPI.Query(q);
-            var records = new List<object>();
-            bool no_more = false; // check can use QueryResult.done
+            var records = new List<IDictionary>();
             try
             {
                 if (qrs.totalSize > 0)
                 {
-                    records.Concat(qrs.records);
+                    records.AddRange(qrs.records);
                 }
 
                 while (!qrs.done)
                 {
-                    try
+
+                    qrs = RESTAPI.QueryMore(qrs.nextRecordsUrl);
+                    if (qrs.totalSize > 0)
                     {
-                        qrs = RESTAPI.QueryMore(qrs.nextRecordsUrl);
-                        if (qrs.totalSize > 0)
-                        {
-                            records.Concat(qrs.records);
-                        }
+                        records.AddRange(qrs.records);
                     }
-                    catch (Exception ex)
-                    {
-                        goto done;
-                    }
+
                 }
             }
             catch (Exception ex)
             {
                 Interaction.MsgBox(ex.Message, Title: "Salesforce.QueryAll Error");
             }
-
-        done:
-            ;
             return records.ToArray();
         }
     }

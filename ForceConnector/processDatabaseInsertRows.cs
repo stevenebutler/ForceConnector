@@ -95,7 +95,7 @@ namespace ForceConnector
                     goto errors;
                 }
 
-                if (!Operation.setDataRanges(ref excelApp, ref worksheet, ref g_table, ref g_start, ref g_header, ref g_body, ref g_objectType, ref g_ids, ref g_sfd, ref statusText, out _, out _, out _))
+                if (!Operation.setDataRanges(ref excelApp, ref worksheet, ref g_table, ref g_start, ref g_header, ref g_body, ref g_objectType, ref g_ids, ref g_sfd, ref statusText, out var headerFields, out var fieldLabelMap , out var fieldMap))
                 {
                     goto errors;
                 }
@@ -135,7 +135,7 @@ namespace ForceConnector
                     chunk = excelApp.Intersect((Excel.Range)excelApp.Selection, chunk); // trim the last chunk
                     row_pointer = row_pointer + ForceConnector.maxBatchSize; // up our row counter
                     var argbgw = bgw;
-                    Operation.insertSelectedRange(ref excelApp, ref worksheet, ref g_table, ref g_header, ref g_sfd, ref g_objectType, ref g_ids, ref chunk, ref someFailed, ref row_counter, ref totals, ref argbgw);
+                    Operation.insertSelectedRange(ref excelApp, ref worksheet, ref g_table, ref g_header, ref g_sfd, ref g_objectType, ref g_ids, ref chunk, ref someFailed, ref row_counter, ref totals, ref argbgw, headerFields, fieldLabelMap, fieldMap);
                     bgw = argbgw; // doit
                     sav.Select(); // and restore
 
@@ -237,6 +237,10 @@ namespace ForceConnector
 
             btnAction.Text = "Done";
             btnAction.Enabled = true;
+            if (!Operation.RequireConfirmation)
+            {
+                btnAction.PerformClick();
+            }
         }
 
         // ******************************************************

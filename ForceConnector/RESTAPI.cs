@@ -23,12 +23,18 @@ namespace ForceConnector
         private readonly static string UpsertRecordsUrl = "{0}/services/data/v{1}/composite/sobjects/{2}/{3}"; // POST(?)/PATCH with Content-Type 'application/json', upto 200 records
         private readonly static string DeleteRecordsUrl = "{0}/services/data/v{1}/composite/sobjects?ids={2}&allOrNone={3}"; // DELETE, upto 200 records
 
+        private static RESTful.DescribeGlobalResult dgr_cache = null;
         public static RESTful.DescribeGlobalSObjectResult[] getSObjectList()
         {
-            RESTful.DescribeGlobalResult dgr;
+            RESTful.DescribeGlobalResult dgr = dgr_cache;
+            if (dgr != null)
+            {
+                return dgr.sobjects;
+            }
             try
             {
                 dgr = DescribeSObjects();
+                dgr_cache = dgr;
             }
             catch (Exception ex)
             {
@@ -76,15 +82,22 @@ namespace ForceConnector
             return describeResult;
         }
 
+        private static Dictionary<string, RESTful.DescribeSObjectResult> metaCache = new Dictionary<string, RESTful.DescribeSObjectResult>();
+
         public static RESTful.DescribeSObjectResult DescribeSObject(string objectName)
         {
             RESTful.DescribeSObjectResult describeResult;
+            if (metaCache.ContainsKey(objectName))
+            {
+                return metaCache[objectName];
+            }
             var jss = new JavaScriptSerializer();
             string serviceUrl = Conversions.ToString(string.Format(SOjectDescribeUrl, ThisAddIn.instanceUrl, Version, objectName));
             string json = CallREST("GET", serviceUrl);
             try
             {
                 describeResult = jss.Deserialize<RESTful.DescribeSObjectResult>(json);
+                metaCache[objectName] = describeResult;
             }
             catch (Exception ex)
             {
@@ -137,9 +150,9 @@ namespace ForceConnector
             return queryResult;
         }
 
-        public static object[] RetrieveRecords(string objectName, string[] ids, string[] fields)
+        public static IDictionary[] RetrieveRecords(string objectName, string[] ids, string[] fields)
         {
-            object[] recordSet;
+            IDictionary[] recordSet;
             var jss = new JavaScriptSerializer();
             var objectBody = new Dictionary<string, string[]>() { { "ids", ids }, { "fields", fields } };
             string serviceUrl = Conversions.ToString(string.Format(RetrieveRecordsUrl, ThisAddIn.instanceUrl, Version, objectName));
@@ -147,7 +160,7 @@ namespace ForceConnector
             string json = CallREST("POST", serviceUrl, stringBody);
             try
             {
-                recordSet = jss.Deserialize<object[]>(json);
+                recordSet = jss.Deserialize<IDictionary[]>(json);
             }
             catch (Exception ex)
             {

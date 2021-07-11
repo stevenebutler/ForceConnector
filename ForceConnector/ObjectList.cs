@@ -129,7 +129,7 @@ namespace ForceConnector
                 withBlock.Columns.Add("sObject API Name", 265, HorizontalAlignment.Left);
                 foreach (Dictionary<string, string> obj in objs)
                 {
-                    if (chkStandard.Checked & standards.Contains(obj["name"]))
+                    if (chkStandard.Checked && standards.Contains(obj["name"]))
                     {
                         var line = new ListViewItem();
                         line.Text = obj["label"];
@@ -137,7 +137,7 @@ namespace ForceConnector
                         withBlock.Items.Add(line);
                     }
 
-                    if (chkCustom.Checked & Conversions.ToBoolean(obj["custom"]) == true)
+                    if (chkCustom.Checked && Conversions.ToBoolean(obj["custom"]) == true)
                     {
                         var line = new ListViewItem();
                         line.Text = obj["label"];
@@ -147,7 +147,7 @@ namespace ForceConnector
 
                     if (chkSystem.Checked)
                     {
-                        if (!standards.Contains(obj["name"]) & Conversions.ToBoolean(obj["custom"]) == false)
+                        if (!standards.Contains(obj["name"]) && Conversions.ToBoolean(obj["custom"]) == false)
                         {
                             var line = new ListViewItem();
                             line.Text = obj["label"];

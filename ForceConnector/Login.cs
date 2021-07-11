@@ -30,6 +30,7 @@ namespace ForceConnector
         private void LoginForm_Load(object sender, EventArgs e)
         {
             ThisAddIn.loginType = "oauth";
+            btnLogin.PerformClick();
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
@@ -177,14 +178,14 @@ namespace ForceConnector
         {
             try
             {
-                soapClient = new SoapClient("Soap", ThisAddIn.conInfo.urls.partner);
-                metaClient = new MetadataPortTypeClient("Metadata", ThisAddIn.conInfo.urls.metadata);
-                soapSessionHeader.sessionId = ThisAddIn.accessToken;
-                metaSessionHeader.sessionId = ThisAddIn.accessToken;
-                ThisAddIn.soapClient = soapClient;
-                ThisAddIn.metaClient = metaClient;
-                ThisAddIn.soapSessionHeader = soapSessionHeader;
-                ThisAddIn.metaSessionHeader = metaSessionHeader;
+                //soapClient = new SoapClient("Soap", ThisAddIn.conInfo.urls.partner);
+                //metaClient = new MetadataPortTypeClient("Metadata", ThisAddIn.conInfo.urls.metadata);
+                //soapSessionHeader.sessionId = ThisAddIn.accessToken;
+                //metaSessionHeader.sessionId = ThisAddIn.accessToken;
+                //ThisAddIn.soapClient = soapClient;
+                //ThisAddIn.metaClient = metaClient;
+                //ThisAddIn.soapSessionHeader = soapSessionHeader;
+                //ThisAddIn.metaSessionHeader = metaSessionHeader;
                 responseBox.Text = "Login Successful!";
                 success = true;
             }
@@ -193,8 +194,9 @@ namespace ForceConnector
                 responseBox.Text = "Logined, but can not use SOAP features";
                 Interaction.MsgBox("You can not use 'Translation Helper' at this time" + Constants.vbCrLf + ex.Message + Constants.vbCrLf + ex.StackTrace, Title: "SOAP Client Error!");
             }
-
+            Operation.LastCheckedLogin = DateTime.Now;
             btnNext.Enabled = true;
+            btnNext.PerformClick();
         }
 
         public bool getSuccess()

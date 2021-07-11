@@ -106,7 +106,7 @@ namespace ForceConnector
 
                 bgw.ReportProgress(0, "Build Query String...");
                 totals = Conversions.ToLong(excelApp.Selection.Rows.Count);
-                if (!RegDB.RegQueryBoolValue(ForceConnector.NOLIMITS) & totals > ForceConnector.maxRows)
+                if (!RegDB.RegQueryBoolValue(ForceConnector.NOLIMITS) && totals > ForceConnector.maxRows)
                 {
                     statusText = "too many rows selected " + totals.ToString("N0") + ", max is " + ForceConnector.maxRows.ToString("N0");
                     goto errors;
@@ -238,6 +238,11 @@ namespace ForceConnector
 
             btnAction.Text = "Done";
             btnAction.Enabled = true;
+            
+            if (!Operation.RequireConfirmation)
+            {
+                btnAction.PerformClick();
+            }
         }
 
         // ******************************************************

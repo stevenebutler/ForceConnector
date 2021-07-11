@@ -95,7 +95,7 @@ namespace ForceConnector
                     goto errors;
                 }
 
-                if (!Operation.setDataRanges(ref excelApp, ref worksheet, ref g_table, ref g_start, ref g_header, ref g_body, ref g_objectType, ref g_ids, ref g_sfd, ref statusText, out var headerFields, out _, out _))
+                if (!Operation.setDataRanges(ref excelApp, ref worksheet, ref g_table, ref g_start, ref g_header, ref g_body, ref g_objectType, ref g_ids, ref g_sfd, ref statusText, out var headerFields, out var fieldLabelMap, out var fieldMap))
                 {
                     goto errors;
                 }
@@ -109,15 +109,17 @@ namespace ForceConnector
                     statusText = "Exceed the limit of update, cancel the update.";
                     goto errors;
                 }
-
                 totals = Conversions.ToLong(excelApp.Selection.Rows.Count);
                 row_counter = 0L;
-                string msg = "You try to update " + totals.ToString("N0") + " records. Are you sure?";
-                var result = TopMostMessageBox.Show("Update Information", msg, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-                if (result == DialogResult.Cancel)
+                if (Operation.RequireConfirmation)
                 {
-                    statusText = "Cancel Update";
-                    goto cancel;
+                    string msg = "You try to update " + totals.ToString("N0") + " records. Are you sure?";
+                    var result = TopMostMessageBox.Show("Update Information", msg, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                    if (result == DialogResult.Cancel)
+                    {
+                        statusText = "Cancel Update";
+                        goto cancel;
+                    }
                 }
 
                 setControlText(btnAction, "Cancel");
@@ -134,12 +136,12 @@ namespace ForceConnector
                     chunk = excelApp.Intersect((Excel.Range)excelApp.Selection, (Excel.Range)worksheet.Rows[(object)row_pointer]); // first row
                     if (chunk is null)
                         break;                      // done here
-                    chunk = chunk.get_Resize(ForceConnector.maxBatchSize);                    // extend the chunk to cover our batchsize
+                    chunk = chunk.Resize[ForceConnector.maxBatchSize];                    // extend the chunk to cover our batchsize
                     chunk = excelApp.Intersect((Excel.Range)excelApp.Selection, chunk); // trim the last chunk
                     row_pointer = row_pointer + ForceConnector.maxBatchSize;              // up our row counter
                     chunk.Interior.ColorIndex = (object)36;
                     var argbgw = bgw;
-                    Operation.updateRange(ref excelApp, ref g_header, ref g_objectType, ref g_start, ref g_sfd, ref g_ids, ref chunk, ref someFailed, ref row_counter, ref totals, ref argbgw);
+                    Operation.updateRange(ref excelApp, ref worksheet, ref g_header, ref g_objectType, ref g_start, ref g_sfd, ref g_ids, ref chunk, ref someFailed, ref row_counter, ref totals, headerFields, fieldLabelMap, fieldMap, ref argbgw);
                     bgw = argbgw;
                     Excel.Range sav;
                     sav = (Excel.Range)excelApp.Selection;
@@ -153,7 +155,7 @@ namespace ForceConnector
                     }
                 }
                 while (!(chunk is null));
-                if (someFailed)
+                if (someFailed && Operation.RequireConfirmation)
                 {
                     Util.ErrorBox("One or more of the selected rows could not be updated" + '\n' + "see the comments in the colored cells for details");
                 }
@@ -243,6 +245,11 @@ namespace ForceConnector
 
             btnAction.Text = "Done";
             btnAction.Enabled = true;
+            btnAction.Enabled = true;
+            if (!Operation.RequireConfirmation)
+            {
+                btnAction.PerformClick();
+            }
         }
 
         // ******************************************************

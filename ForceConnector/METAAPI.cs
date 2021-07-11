@@ -152,7 +152,6 @@ namespace ForceConnector
                 Interaction.MsgBox(statusText, Title: "Download Objects Translation");
             }
 
-        done:
             ;
             ThisAddIn.excelApp.StatusBar = "Download Object Translations completed";
         }
@@ -283,10 +282,9 @@ namespace ForceConnector
             }
             catch (Exception ex)
             {
-                throw new Exception("queryCustomLabel Exception" + Constants.vbCrLf + ex.Message);
+                throw new Exception("queryCustomLabel Exception" + Constants.vbCrLf + ex.Message, ex);
             }
 
-            return false;
         }
 
         public static void uploadCustomLabel(ref Excel.Application excelApp, ref Excel.Range todo, ref bool someFailed)
@@ -908,7 +906,7 @@ namespace ForceConnector
                         case "customApplications":
                             {
                                 string val = Conversions.ToString(rw.get_Value());
-                                if (!val.Contains("<!--") & val.Length > 0)
+                                if (!val.Contains("<!--") && val.Length > 0)
                                 {
                                     var ca = new CustomApplicationTranslation();
                                     ca.name = childs[1];
@@ -922,7 +920,7 @@ namespace ForceConnector
                         case "customPageWebLinks":
                             {
                                 string val = Conversions.ToString(rw.get_Value());
-                                if (!val.Contains("<!--") & val.Length > 0)
+                                if (!val.Contains("<!--") && val.Length > 0)
                                 {
                                     var cpwl = new CustomPageWebLinkTranslation();
                                     cpwl.name = childs[1];
@@ -936,7 +934,7 @@ namespace ForceConnector
                         case "customTabs":
                             {
                                 string val = Conversions.ToString(rw.get_Value());
-                                if (!val.Contains("<!--") & val.Length > 0)
+                                if (!val.Contains("<!--") && val.Length > 0)
                                 {
                                     var ct = new CustomTabTranslation();
                                     ct.name = childs[1];
@@ -962,7 +960,7 @@ namespace ForceConnector
                         case "quickActions":
                             {
                                 string val = Conversions.ToString(rw.get_Value());
-                                if (!val.Contains("<!--") & val.Length > 0)
+                                if (!val.Contains("<!--") && val.Length > 0)
                                 {
                                     var qa = new GlobalQuickActionTranslation();
                                     qa.name = childs[1];
@@ -976,7 +974,7 @@ namespace ForceConnector
                         case "reportTypes":
                             {
                                 string val = Conversions.ToString(rw.get_Value());
-                                if (!val.Contains("<!--") & val.Length > 0)
+                                if (!val.Contains("<!--") && val.Length > 0)
                                 {
                                     var rt = new ReportTypeTranslation();
                                     rt.name = childs[1];
@@ -990,7 +988,7 @@ namespace ForceConnector
                         case "scontrols":
                             {
                                 string val = Conversions.ToString(rw.get_Value());
-                                if (!val.Contains("<!--") & val.Length > 0)
+                                if (!val.Contains("<!--") && val.Length > 0)
                                 {
                                     var sc = new ScontrolTranslation();
                                     sc.name = childs[1];
@@ -1047,7 +1045,7 @@ namespace ForceConnector
 
         public static void parsingFlowDefinitionTranslation(ref Dictionary<string, FlowDefinitionTranslation> fdm, string[] childs, string value)
         {
-            if (!value.Contains("<!--") & value.Length > 0)
+            if (!value.Contains("<!--") && value.Length > 0)
             {
                 if (childs.Length == 2)
                 {
@@ -1114,7 +1112,7 @@ namespace ForceConnector
 
         public static void parsingPromptTranslation(ref List<PromptTranslation> ps, string[] childs, string value)
         {
-            if (!value.Contains("<!--") & value.Length > 0)
+            if (!value.Contains("<!--") && value.Length > 0)
             {
                 bool hasPrompt = false;
                 if (childs.Length == 3)
@@ -1326,7 +1324,7 @@ namespace ForceConnector
                 excelApp.StatusBar = "build data Ranges";
                 try
                 {
-                    if (excelApp.ActiveCell.CurrentRegion.Count == 1 & excelApp.ActiveCell.CurrentRegion.get_Value() is null)
+                    if (excelApp.ActiveCell.CurrentRegion.Count == 1 && excelApp.ActiveCell.CurrentRegion.get_Value() is null)
                     {
                         worksheet.Range["A1"].Select();
                         m_table = excelApp.ActiveCell.CurrentRegion;
@@ -1372,8 +1370,7 @@ namespace ForceConnector
                 throw new Exception("setWorkArea Exception" + Constants.vbCrLf + ex.Message);
             }
 
-        done:
-            ;
+     
         }
 
         public static void getTranslations(ref List<string> m_langSet)
@@ -1463,7 +1460,7 @@ namespace ForceConnector
                 m_body.Cells[Operators.SubtractObject(findRowIdx, 2), 2] = value;
                 m_body.Cells[Operators.SubtractObject(findRowIdx, 2), m_langCol] = trsnvalue;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 m_body.Cells[(m_rows - 1L), 1] = keyword;
                 m_body.Cells[(m_rows - 1L), 2] = value;
@@ -1484,7 +1481,7 @@ namespace ForceConnector
                 object findRowIdx = excelApp.WorksheetFunction.Match(keyword, keyCol.EntireColumn, false);
                 m_body.Cells[Operators.SubtractObject(findRowIdx, 2), m_langCol] = value;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 m_body.Cells[(m_rows - 1L), 1] = keyword;
                 m_body.Cells[(m_rows - 1L), m_langCol] = value;

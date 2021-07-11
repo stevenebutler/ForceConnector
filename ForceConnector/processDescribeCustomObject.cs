@@ -105,7 +105,7 @@ namespace ForceConnector
                 }
 
                 selectObjectsBox.ShowDialog();
-                if (selectObjectsBox.success & selectObjectsBox.objectList.Count > 0)
+                if (selectObjectsBox.success && selectObjectsBox.objectList.Count > 0)
                 {
                     objectList = selectObjectsBox.objectList.ToArray();
                     baseLang = selectObjectsBox.baseLanguage;

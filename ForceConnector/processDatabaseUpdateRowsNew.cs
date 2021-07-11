@@ -207,7 +207,7 @@ namespace ForceConnector
                         }
 
                         // if recordSet does not contains any updatable columns, cancel update
-                        if (records.Count == 0 & recordSet.Count == 2)
+                        if (records.Count == 0 && recordSet.Count == 2)
                         {
                             statusText = "No updatable columns selected, operation canceled.";
                             goto errors;
@@ -226,7 +226,7 @@ namespace ForceConnector
                         Operation.updateResultHandlerNew(ref worksheet, ref intFailedRows, records, strArryCells);
 
                         // //reinitialize for next batch
-                        if (totalRow - intJobPointer < ForceConnector.maxBatchSize & totalRow - intJobPointer != 0L) // 6.13
+                        if (totalRow - intJobPointer < ForceConnector.maxBatchSize && totalRow - intJobPointer != 0L) // 6.13
                         {
                             strArryCells = new string[(int)(totalRow - intJobPointer - 1L + 1)];
                         }
@@ -329,6 +329,10 @@ namespace ForceConnector
 
             btnAction.Text = "Done";
             btnAction.Enabled = true;
+            if (!Operation.RequireConfirmation)
+            {
+                btnAction.PerformClick();
+            }
         }
 
         // ******************************************************
