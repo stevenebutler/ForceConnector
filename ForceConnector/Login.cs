@@ -30,7 +30,7 @@ namespace ForceConnector
         private void LoginForm_Load(object sender, EventArgs e)
         {
             ThisAddIn.loginType = "oauth";
-            btnLogin.PerformClick();
+            usingOAuth2_CheckedChanged(sender, e);
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
@@ -160,7 +160,7 @@ namespace ForceConnector
         {
             if (RESTFULAPI.Checked)
             {
-                ThisAddIn.usingRESTful = Conversions.ToBoolean(Constants.vbTrue);
+                ThisAddIn.usingRESTful = true;
             }
         }
 
@@ -168,7 +168,7 @@ namespace ForceConnector
         {
             if (SOAPAPI.Checked)
             {
-                ThisAddIn.usingRESTful = Conversions.ToBoolean(Constants.vbFalse);
+                ThisAddIn.usingRESTful = false;
             }
         }
 
@@ -178,14 +178,14 @@ namespace ForceConnector
         {
             try
             {
-                //soapClient = new SoapClient("Soap", ThisAddIn.conInfo.urls.partner);
-                //metaClient = new MetadataPortTypeClient("Metadata", ThisAddIn.conInfo.urls.metadata);
-                //soapSessionHeader.sessionId = ThisAddIn.accessToken;
-                //metaSessionHeader.sessionId = ThisAddIn.accessToken;
-                //ThisAddIn.soapClient = soapClient;
-                //ThisAddIn.metaClient = metaClient;
-                //ThisAddIn.soapSessionHeader = soapSessionHeader;
-                //ThisAddIn.metaSessionHeader = metaSessionHeader;
+                soapClient = new SoapClient("Soap", ThisAddIn.conInfo.urls.partner);
+                metaClient = new MetadataPortTypeClient("Metadata", ThisAddIn.conInfo.urls.metadata);
+                soapSessionHeader.sessionId = ThisAddIn.accessToken;
+                metaSessionHeader.sessionId = ThisAddIn.accessToken;
+                ThisAddIn.soapClient = soapClient;
+                ThisAddIn.metaClient = metaClient;
+                ThisAddIn.soapSessionHeader = soapSessionHeader;
+                ThisAddIn.metaSessionHeader = metaSessionHeader;
                 responseBox.Text = "Login Successful!";
                 success = true;
             }

@@ -131,22 +131,14 @@ namespace ForceConnector
                 Excel.Range chunk;
                 do // build a chunk Range which covers the cells we can query in a batch
                 {
-                    chunk = excelApp.Intersect((Excel.Range)excelApp.Selection, (Excel.Range)excelApp.ActiveSheet.Rows(row_pointer));
+                    chunk = excelApp.Intersect(excelApp.Selection, excelApp.ActiveSheet.Rows(row_pointer));
                     if (chunk is null)
                         break;
-                    chunk = chunk.get_Resize(ForceConnector.maxBatchSize); // extend the chunk to cover our batchsize
-                    chunk = excelApp.Intersect((Excel.Range)excelApp.Selection, chunk); // trim the last chunk !
+                    chunk = chunk.Resize[ForceConnector.maxBatchSize]; // extend the chunk to cover our batchsize
+                    chunk = excelApp.Intersect(excelApp.Selection, chunk); // trim the last chunk !
                     row_pointer = row_pointer + ForceConnector.maxBatchSize; // up our pos counter
-                                                                             // Debug.Print "here do the chunk, " & chunk.row & " " & chunk.Rows.Count
-                                                                             // For Each c In chunk
-                                                                             // Debug.Print c.value
-                                                                             // Next c
 
-                    // Dim percent As Integer = CInt((outrow / totals) * 100)
-                    // If percent > 100 Then percent = 100
-                    // bgw.ReportProgress(percent, "Download " & chunk.Count.ToString() & " records from row " & outrow.ToString("N0"))
-
-                    chunk.Interior.ColorIndex = (object)36; // show off...
+                    chunk.Interior.ColorIndex = 36; // show off...
                     excelApp.ScreenUpdating = false;
                     bool localquerySelectedRow() { 
                         var argbgw = bgw; 
@@ -158,13 +150,8 @@ namespace ForceConnector
                     if (!localquerySelectedRow())
                         goto done; // do it
                     excelApp.ScreenUpdating = true;
-                  //  System.Threading.Thread.Sleep(100);
-                    chunk.Interior.ColorIndex = (object)0;
+                    chunk.Interior.ColorIndex = 0;
 
-                    // bgw.ReportProgress(percent, "Wrote " & chunk.Count.ToString() & " records from row " & outrow.ToString("N0"))
-                    // outrow = outrow + chunk.Count
-
-                    // ' check at regular intervals for CancellationPending
                     if (bgw.CancellationPending)
                     {
                         // bgw.ReportProgress(percent, "Cancelling...")

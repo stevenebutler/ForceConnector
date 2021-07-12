@@ -158,7 +158,7 @@ namespace ForceConnector
             this.cmbDestination.Name = "cmbDestination";
             this.cmbDestination.Size = new System.Drawing.Size(100, 24);
             this.cmbDestination.TabIndex = 9;
-            this.cmbDestination.Text = "Sandbox";
+            this.cmbDestination.Text = "Production";
             // 
             // cmbVersion
             // 

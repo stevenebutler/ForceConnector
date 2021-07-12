@@ -375,7 +375,17 @@ namespace ForceConnector
             FixIDRet = InID + FixIDRet;
             return FixIDRet;
         }
-
+        enum CVErrEnum : Int32
+        {
+            ErrDiv0 = -2146826281,
+            ErrGettingData = -2146826245,
+            ErrNA = -2146826246,
+            ErrName = -2146826259,
+            ErrNull = -2146826288,
+            ErrNum = -2146826252,
+            ErrRef = -2146826265,
+            ErrValue = -2146826273
+        }
         // 
         // look at the field type and variant type, cast the into a return value
         // 
@@ -383,6 +393,23 @@ namespace ForceConnector
         {
             object toVBtypeRet = default;
             object val = cel.Value;
+            if (val is Int32 cvErr)
+            {
+                switch ((CVErrEnum) cvErr)
+                {
+                    case CVErrEnum.ErrDiv0: return "#DIV/0!";
+                    case CVErrEnum.ErrGettingData: return "#DATA";
+                    case CVErrEnum.ErrNA: return "#N/A";
+                    case CVErrEnum.ErrName: return "#NAME";
+                    case CVErrEnum.ErrNull: return "#NULL";
+                    case CVErrEnum.ErrNum: return "#NUM";
+                    case CVErrEnum.ErrRef: return "#REF";
+                    case CVErrEnum.ErrValue: return "#VALUE";
+                    default: return $"#UNKNOWN {cvErr}";
+                }
+                // Value is an error
+                
+            }
             // empty cell is null - special case
             if (string.IsNullOrEmpty(Conversions.ToString(val)))
             {

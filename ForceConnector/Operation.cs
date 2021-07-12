@@ -830,12 +830,7 @@ namespace ForceConnector
                     percent = 100;
                 bgw.ReportProgress(percent, "Download " + todo.Count.ToString() + " records from row " + outrow.ToString("N0"));
                 var idlist = objectids(ref excelApp, ref worksheet, ref g_ids, ref todo);
-                //foreach (Excel.Range rw in todo.Rows)
-                //{
-                //    idlist[i] = objectid(ref excelApp, ref worksheet, ref g_ids, rw.Row, true);
-                //    i = i + 1;
-                //}
-
+        
                 var qrs = RESTAPI.RetrieveRecords(g_objectType, idlist, sels.ToArray());
                 var sd = new Dictionary<string, object>();
                 foreach (IDictionary x in qrs)
@@ -848,7 +843,13 @@ namespace ForceConnector
                         }
                     }
                 }
-
+                ApplyDataToRange(worksheet, todo.Row, g_body.Column, headerFields.Select(x => x.name).ToList(), qrs, g_sfd);
+                outrow += qrs.Length;
+                percent = (int)Math.Round(outrow / (double)totals * 100d);
+                if (percent > 100)
+                    percent = 100;
+                bgw.ReportProgress(percent, "Write record (" + outrow.ToString("N0") + " / " + totals.ToString("N0") + ")");
+                return true;
                 foreach (Excel.Range rw in todo.Rows)
                 {
                     var key = Operation.objectid(ref excelApp, ref worksheet, ref g_ids, rw.Row, true);
