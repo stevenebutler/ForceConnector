@@ -24,9 +24,9 @@ namespace ForceConnector
         private Excel.Workbook workbook;
         private Excel.Worksheet worksheet;
         private Excel.Range start;
-        private string[] namedFields;
-        private Dictionary<string, Partner.Field> standardFields = new Dictionary<string, Partner.Field>();
-        private Dictionary<string, Partner.Field> customFields = new Dictionary<string, Partner.Field>();
+
+        private readonly static string[] namedFieldsOrder = new string[] { "Id", "Name", "Subject", "CurrencyISOCode", "MasterRecordId", "CreatedById", "CreatedDate", "LastModifiedById", "LastModifiedDate", "IsDeleted", "SystemModstamp", "LastActivityDate", "LastViewedDate", "LastReferencedDate", "RecordTypeId", "OwnerId" };
+        private readonly static HashSet<string> namedFields = new HashSet<string>(namedFieldsOrder);
 
         private void processDescribeCustomObject_Load(object sender, EventArgs e)
         {
@@ -118,7 +118,6 @@ namespace ForceConnector
                     goto errors;
                 }
 
-                namedFields = new[] { "Id", "Name", "Subject", "CurrencyISOCode", "MasterRecordId", "CreatedById", "CreatedDate", "LastModifiedById", "LastModifiedDate", "IsDeleted", "SystemModstamp", "LastActivityDate", "LastViewedDate", "LastReferencedDate", "RecordTypeId", "OwnerId" };
                 int numOfObject = objectList.Length;
                 int objectCount = 0;
                 int numOfPart = (int)Math.Round(100d / numOfObject);
@@ -127,8 +126,8 @@ namespace ForceConnector
                 {
                     var fieldMeta = new Dictionary<string, Dictionary<string, string>>();
                     var objLabels = new Dictionary<string, string>();
-                    standardFields.Clear();
-                    customFields.Clear();
+                    var standardFields = new Dictionary<string, Partner.Field>();
+                    var customFields = new Dictionary<string, Partner.Field>();
                     bgw.ReportProgress(percent, "Describe " + objname + "... ");
                     var co = DescribeCustomObject.DescribeSObject(objname, baseLang);
                     var fields = co.fields;
@@ -159,17 +158,40 @@ namespace ForceConnector
                         }
                     }
 
-                    excelApp.ScreenUpdating = false;
+                    excelApp.ScreenUpdating = true;
                     DescribeCustomObject.setWorkSheet(ref excelApp, ref workbook, ref worksheet, objname);
                     DescribeCustomObject.setLayout(ref worksheet, objname, ref objLabels);
                     DescribeCustomObject.renderHeader(ref worksheet, ref start, objname);
-                    rowPointer = DescribeCustomObject.renderNamedField(ref worksheet, ref start, ref standardFields, ref fieldMeta, rowPointer);
+                    // Renders predefined list of fields first (Salesforce Metadata),
+                    // Then the standard fields
+                    // Then the custom fields
+                    object[,] data = new object[numOfField, 13];
+
+                    rowPointer = DescribeCustomObject.renderNamedField(ref worksheet, ref start, namedFieldsOrder, ref standardFields, ref fieldMeta, rowPointer, data);
                     var argbgw1 = bgw;
-                    rowPointer = DescribeCustomObject.renderStandardField(ref worksheet, ref start, ref namedFields, ref standardFields, ref fieldMeta, rowPointer, ref objectCount, ref numOfPart, numOfField, objname, ref argbgw1);
+                    rowPointer = DescribeCustomObject.renderStandardField(ref worksheet, ref start, namedFields, ref standardFields, ref fieldMeta, rowPointer, ref objectCount, ref numOfPart, numOfField, objname, ref argbgw1, data);
                     bgw = argbgw1;
                     var argbgw2 = bgw;
-                    DescribeCustomObject.renderCustomField(ref worksheet, ref start, ref namedFields, ref customFields, ref fieldMeta, rowPointer, ref objectCount, ref numOfPart, numOfField, objname, ref argbgw2);
+                    DescribeCustomObject.renderCustomField(ref worksheet, ref start, namedFields, ref customFields, ref fieldMeta, rowPointer, ref objectCount, ref numOfPart, numOfField, objname, ref argbgw2, data);
+
+                    Excel.Range rng = worksheet.Range[start, start.Offset[numOfField - 1, 12]];
+
+                    rng.Clear();
+
+                    // Set the range values
+                    rng.Value = data;
+
+                    // Formatting for the whole range
+                    rng.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    rng.Borders[Excel.XlBordersIndex.xlInsideVertical].LineStyle = Excel.XlLineStyle.xlDot;
+                    rng.IndentLevel = 1;
+
+                    // TODO: Add comments on fields that require them:
+                    // * Picklist, references
+                    // * Translations?
                     bgw = argbgw2;
+
+
                     excelApp.ScreenUpdating = true;
 
                     // ' check at regular intervals for CancellationPending

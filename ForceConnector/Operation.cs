@@ -410,22 +410,31 @@ namespace ForceConnector
                 int percent = (int)Math.Round(row_counter / (double)totals * 100d);
                 bgw.ReportProgress(percent, "Building record block from row " + row_counter.ToString("N0"));
 
+                // cell 5 selected
+                // start col for range is 3
+                // headers goes from 0 through count -1
+                // startHeader would be 2
+                // 2 = 5 - 3
+                int tableStart = g_start.Column;
+                int startCol = todo.Column;
+                int endCol = startCol + todo.Columns.Count - 1;
+
                 for (var i = 0; i < idlist.Length; i++)
                 {
 
                     recordSet = new Dictionary<string, object>();
                     recordSet.Add("attributes", new RESTful.Attributes(g_objectType));
                     recordSet.Add("Id", idlist[i]);
-                    for (int j = 1; j <= headerFields.Count; j++)
+                    for (int j = startCol; j <= endCol; j++)
                     {
-                        var field = headerFields[j - 1];
+                        var field = headerFields[j - tableStart];
                         // field name
-                        string fld = field.name;// Util.getAPINameFromCell((Excel.Range)g_header.Cells[1, Operators.SubtractObject(Operators.AddObject(1, j.Column), g_start.Column)]);
+                        string fld = field.name;
 
                         // only updatable columns add to recordSet
                         if (!field.updateable)
                             goto nextcol;
-                        Excel.Range target = todo.Cells[i + 1, j];// get_Offset(i, Operators.SubtractObject(j.Column, todo.Column));
+                        Excel.Range target = todo.Cells[i + 1, j - startCol + 1];
                         recordSet.Add(fld, Util.toVBtype(target, field));
                     nextcol:
                         ;
@@ -455,7 +464,7 @@ namespace ForceConnector
                     }
                     srMap.Add(sr.id, sr);
                 }
-                
+
                 percent = (int)Math.Round((row_counter + srs.Length) / (double)totals * 100d);
                 bgw.ReportProgress(percent, "Updating (" + srs.Length + ") records from row " + row_counter.ToString("N0"));
                 row_counter = row_counter + srs.Length;
@@ -512,7 +521,7 @@ namespace ForceConnector
                     // clear out the color on this row only
                     // also remove any comments which may now be incorrect
                     // for this entire row, need to clear on each col of the selection
-                   
+
                     //thisrow.Interior.ColorIndex = 0;
                     //foreach (Excel.Range c in thisrow.Cells)
                     //{
@@ -823,26 +832,25 @@ namespace ForceConnector
             try
             {
                 int percent = 0;
-                int i = 0;
 
                 percent = (int)Math.Round(outrow / (double)totals * 100d);
                 if (percent > 100)
                     percent = 100;
-                bgw.ReportProgress(percent, "Download " + todo.Count.ToString() + " records from row " + outrow.ToString("N0"));
+                bgw.ReportProgress(percent, $"Download {todo.Rows.Count} records from row {outrow:N0}");
                 var idlist = objectids(ref excelApp, ref worksheet, ref g_ids, ref todo);
-        
+
                 var qrs = RESTAPI.RetrieveRecords(g_objectType, idlist, sels.ToArray());
-                var sd = new Dictionary<string, object>();
-                foreach (IDictionary x in qrs)
-                {
-                    if (x != null)
-                    {
-                        if (!sd.ContainsKey(Conversions.ToString(x["Id"])))
-                        {
-                            sd.Add(Conversions.ToString(x["Id"]), x);
-                        }
-                    }
-                }
+                //var sd = new Dictionary<string, object>();
+                //foreach (IDictionary x in qrs)
+                //{
+                //    if (x != null)
+                //    {
+                //        if (!sd.ContainsKey(Conversions.ToString(x["Id"])))
+                //        {
+                //            sd.Add(Conversions.ToString(x["Id"]), x);
+                //        }
+                //    }
+                //}
                 ApplyDataToRange(worksheet, todo.Row, g_body.Column, headerFields.Select(x => x.name).ToList(), qrs, g_sfd);
                 outrow += qrs.Length;
                 percent = (int)Math.Round(outrow / (double)totals * 100d);
@@ -850,29 +858,29 @@ namespace ForceConnector
                     percent = 100;
                 bgw.ReportProgress(percent, "Write record (" + outrow.ToString("N0") + " / " + totals.ToString("N0") + ")");
                 return true;
-                foreach (Excel.Range rw in todo.Rows)
-                {
-                    var key = Operation.objectid(ref excelApp, ref worksheet, ref g_ids, rw.Row, true);
-                    if (sd.ContainsKey(key))
-                    {
-                        var so = sd[key];
-                        formatWriteRow(ref worksheet, ref g_header, ref g_body, ref g_sfd, so as IDictionary, Conversions.ToInteger(Operators.SubtractObject(rw.Row, 2)), headerFields, fieldLabelMap, fieldMap, false);
-                        outrow = outrow + 1L;
-                        percent = (int)Math.Round(outrow / (double)totals * 100d);
-                        if (percent > 100)
-                            percent = 100;
-                        bgw.ReportProgress(percent, "Write record (" + outrow.ToString("N0") + " / " + totals.ToString("N0") + ")");
-                    }
-                    else
-                    {
-                        Excel.Range badRange = worksheet.Cells[rw.Row, g_ids.Column];
-                        badRange.Font.ColorIndex = 7;
-                    }
-                }
+                //foreach (Excel.Range rw in todo.Rows)
+                //{
+                //    var key = Operation.objectid(ref excelApp, ref worksheet, ref g_ids, rw.Row, true);
+                //    if (sd.ContainsKey(key))
+                //    {
+                //        var so = sd[key];
+                //        formatWriteRow(ref worksheet, ref g_header, ref g_body, ref g_sfd, so as IDictionary, Conversions.ToInteger(Operators.SubtractObject(rw.Row, 2)), headerFields, fieldLabelMap, fieldMap, false);
+                //        outrow = outrow + 1L;
+                //        percent = (int)Math.Round(outrow / (double)totals * 100d);
+                //        if (percent > 100)
+                //            percent = 100;
+                //        bgw.ReportProgress(percent, "Write record (" + outrow.ToString("N0") + " / " + totals.ToString("N0") + ")");
+                //    }
+                //    else
+                //    {
+                //        Excel.Range badRange = worksheet.Cells[rw.Row, g_ids.Column];
+                //        badRange.Font.ColorIndex = 7;
+                //    }
+                //}
 
-                sd = null;
-                qrs = null;
-                return true;
+                //sd = null;
+                //qrs = null;
+                //return true;
             }
             catch (Exception ex)
             {

@@ -89,11 +89,7 @@ namespace ForceConnector
                 excelApp.StatusBar = "Update Selected Rows...";
                 setControlText(btnAction, "Wait...");
                 bgw.ReportProgress(0, "Please wait for initialize...");
-                if (!Util.checkSession())
-                {
-                    statusText = "Session Failed!";
-                    goto errors;
-                }
+               
 
                 if (!Operation.setDataRanges(ref excelApp, ref worksheet, ref g_table, ref g_start, ref g_header, ref g_body, ref g_objectType, ref g_ids, ref g_sfd, ref statusText, out var headerFields, out var fieldLabelMap, out var fieldMap))
                 {

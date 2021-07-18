@@ -67,7 +67,7 @@ namespace ForceConnector
                     }
                 }
 
-                bgw.ReportProgress(percent, "Add field description and(or) tarnslation for " + objname + "'s fields...");
+                bgw.ReportProgress(percent, "Add field description and(or) translation for " + objname + "'s fields...");
                 foreach (Partner.Field fld in fields)
                 {
                     var fldinfo = new Dictionary<string, string>();
@@ -215,125 +215,21 @@ namespace ForceConnector
             worksheet.Range["N3"].Value = "Description";
         }
 
-        public static int renderNamedField(ref Excel.Worksheet worksheet, ref Excel.Range start, ref Dictionary<string, Partner.Field> standardFields, ref Dictionary<string, Dictionary<string, string>> fieldMeta, int rowPointer)
+        public static int renderNamedField(ref Excel.Worksheet worksheet, ref Excel.Range start, string[] namedFieldsOrder, ref Dictionary<string, Partner.Field> standardFields, ref Dictionary<string, Dictionary<string, string>> fieldMeta, int rowPointer, object[,] data)
         {
-            Dictionary<string, string> fldinfo;
-            if (standardFields.ContainsKey("Id"))
+            foreach (var fld in namedFieldsOrder)
             {
-                fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey("Id"), fieldMeta["Id"], null);
-                renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields["Id"]);
-                rowPointer = rowPointer + 1;
+                if (standardFields.ContainsKey(fld))
+                {
+                    Dictionary<string, string> fldinfo = fieldMeta.ContainsKey(fld) ? fieldMeta[fld]: null;
+                    populateFieldValues(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields[fld], data);
+                    rowPointer = rowPointer + 1;
+                }
             }
-
-            if (standardFields.ContainsKey("MasterRecordId"))
-            {
-                fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey("MasterRecordId"), fieldMeta["MasterRecordId"], null);
-                renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields["MasterRecordId"]);
-                rowPointer = rowPointer + 1;
-            }
-
-            if (standardFields.ContainsKey("RecordTypeId"))
-            {
-                fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey("RecordTypeId"), fieldMeta["RecordTypeId"], null);
-                renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields["RecordTypeId"]);
-                rowPointer = rowPointer + 1;
-            }
-
-            if (standardFields.ContainsKey("IsDeleted"))
-            {
-                fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey("IsDeleted"), fieldMeta["IsDeleted"], null);
-                renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields["IsDeleted"]);
-                rowPointer = rowPointer + 1;
-            }
-
-            if (standardFields.ContainsKey("Name"))
-            {
-                fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey("Name"), fieldMeta["Name"], null);
-                renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields["Name"]);
-                rowPointer = rowPointer + 1;
-            }
-
-            if (standardFields.ContainsKey("Subject"))
-            {
-                fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey("Subject"), fieldMeta["Subject"], null);
-                renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields["Subject"]);
-                rowPointer = rowPointer + 1;
-            }
-
-            if (standardFields.ContainsKey("CurrencyISOCode"))
-            {
-                fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey("CurrencyISOCode"), fieldMeta["CurrencyISOCode"], null);
-                renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields["CurrencyISOCode"]);
-                rowPointer = rowPointer + 1;
-            }
-
-            if (standardFields.ContainsKey("CreatedById"))
-            {
-                fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey("CreatedById"), fieldMeta["CreatedById"], null);
-                renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields["CreatedById"]);
-                rowPointer = rowPointer + 1;
-            }
-
-            if (standardFields.ContainsKey("CreatedDate"))
-            {
-                fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey("CreatedDate"), fieldMeta["CreatedDate"], null);
-                renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields["CreatedDate"]);
-                rowPointer = rowPointer + 1;
-            }
-
-            if (standardFields.ContainsKey("LastModifiedById"))
-            {
-                fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey("LastModifiedById"), fieldMeta["LastModifiedById"], null);
-                renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields["LastModifiedById"]);
-                rowPointer = rowPointer + 1;
-            }
-
-            if (standardFields.ContainsKey("LastModifiedDate"))
-            {
-                fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey("LastModifiedDate"), fieldMeta["LastModifiedDate"], null);
-                renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields["LastModifiedDate"]);
-                rowPointer = rowPointer + 1;
-            }
-
-            if (standardFields.ContainsKey("SystemModstamp"))
-            {
-                fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey("SystemModstamp"), fieldMeta["SystemModstamp"], null);
-                renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields["SystemModstamp"]);
-                rowPointer = rowPointer + 1;
-            }
-
-            if (standardFields.ContainsKey("LastActivityDate"))
-            {
-                fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey("LastActivityDate"), fieldMeta["LastActivityDate"], null);
-                renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields["LastActivityDate"]);
-                rowPointer = rowPointer + 1;
-            }
-
-            if (standardFields.ContainsKey("LastViewedDate"))
-            {
-                fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey("LastViewedDate"), fieldMeta["LastViewedDate"], null);
-                renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields["LastViewedDate"]);
-                rowPointer = rowPointer + 1;
-            }
-
-            if (standardFields.ContainsKey("LastReferencedDate"))
-            {
-                fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey("LastReferencedDate"), fieldMeta["LastReferencedDate"], null);
-                renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields["LastReferencedDate"]);
-                rowPointer = rowPointer + 1;
-            }
-
-            if (standardFields.ContainsKey("OwnerId"))
-            {
-                fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey("OwnerId"), fieldMeta["OwnerId"], null);
-                renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields["OwnerId"]);
-                rowPointer = rowPointer + 1;
-            }
-
             return rowPointer;
         }
 
-        public static int renderStandardField(ref Excel.Worksheet worksheet, ref Excel.Range start, ref string[] namedFields, ref Dictionary<string, Partner.Field> standardFields, ref Dictionary<string, Dictionary<string, string>> fieldMeta, int rowPointer, ref int objectCount, ref int numOfPart, int numOfField, string objname, ref System.ComponentModel.BackgroundWorker bgw)
+        public static int renderStandardField(ref Excel.Worksheet worksheet, ref Excel.Range start, HashSet<string> namedFields, ref Dictionary<string, Partner.Field> standardFields, ref Dictionary<string, Dictionary<string, string>> fieldMeta, int rowPointer, ref int objectCount, ref int numOfPart, int numOfField, string objname, ref System.ComponentModel.BackgroundWorker bgw, object[,] data)
         {
             var keys = standardFields.Keys.ToArray();
             Array.Sort(keys);
@@ -344,7 +240,7 @@ namespace ForceConnector
                     int percent = (int)Math.Round(numOfPart * (rowPointer / (double)numOfField)) + numOfPart * objectCount;
                     bgw.ReportProgress(percent, "Describe " + objname + " (fields " + rowPointer.ToString() + " / " + numOfField.ToString() + ")");
                     Dictionary<string, string> fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey(key), fieldMeta[key], null);
-                    renderField(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields[key]);
+                    populateFieldValues(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields[key], data);
                     rowPointer = rowPointer + 1;
                 }
             }
@@ -352,7 +248,7 @@ namespace ForceConnector
             return rowPointer;
         }
 
-        public static void renderCustomField(ref Excel.Worksheet worksheet, ref Excel.Range start, ref string[] namedFields, ref Dictionary<string, Partner.Field> customFields, ref Dictionary<string, Dictionary<string, string>> fieldMeta, int rowPointer, ref int objectCount, ref int numOfPart, int numOfField, string objname, ref System.ComponentModel.BackgroundWorker bgw)
+        public static void renderCustomField(ref Excel.Worksheet worksheet, ref Excel.Range start, HashSet<string> namedFields, ref Dictionary<string, Partner.Field> customFields, ref Dictionary<string, Dictionary<string, string>> fieldMeta, int rowPointer, ref int objectCount, ref int numOfPart, int numOfField, string objname, ref System.ComponentModel.BackgroundWorker bgw, object[,] data)
         {
             var keys = customFields.Keys.ToArray();
             Array.Sort(keys);
@@ -363,20 +259,36 @@ namespace ForceConnector
                     int percent = (int)Math.Round(numOfPart * (rowPointer / (double)numOfField)) + numOfPart * objectCount;
                     bgw.ReportProgress(percent, "Describe " + objname + " (fields " + rowPointer.ToString("N0") + " / " + numOfField.ToString("N0") + ")");
                     Dictionary<string, string> fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey(key), fieldMeta[key], null);
-                    renderField(ref worksheet, ref start, ref fldinfo, rowPointer, customFields[key]);
+                    populateFieldValues(ref worksheet, ref start, ref fldinfo, rowPointer, customFields[key], data);
                     rowPointer = rowPointer + 1;
                 }
             }
         }
 
+        public static void populateFieldValues(ref Excel.Worksheet worksheet, ref Excel.Range start, ref Dictionary<string, string> fieldinfo, int rownum, Partner.Field fld, object[,] data)
+        {
+            data[rownum, 0] = fld.name;
+            data[rownum, 2] = fieldType[(int)fld.type];
+            data[rownum, 3] = fld.custom ? "Yes" : "No";
+            data[rownum, 4] = fld.autoNumber ? "Yes" : "No";
+            data[rownum, 5] = fld.nillable ? "Yes" : "No";
+            data[rownum, 6] = fld.encrypted ? "Yes" : "No";
+            data[rownum, 7] = fld.externalId ? "Yes" : "No";
+            data[rownum, 8] = fld.length;
+            data[rownum, 9] = fld.scale;
+            data[rownum, 10] = fld.digits;
+            data[rownum, 11] = fld.precision;
+            data[rownum, 12] = fieldinfo.ContainsKey("desc") ? fieldinfo["desc"] : "";
+        }
+
         public static void renderField(ref Excel.Worksheet worksheet, ref Excel.Range start, ref Dictionary<string, string> fieldinfo, int rownum, Partner.Field fld)
         {
-            var startCell = start.get_Offset(rownum, 0);
+            var startCell = start.Offset[rownum, 0];
             var dataRow = worksheet.Range[startCell, startCell.Offset[0, 12]];
             dataRow.Borders[Excel.XlBordersIndex.xlEdgeTop].LineStyle = Excel.XlLineStyle.xlContinuous;
             dataRow.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
             dataRow.Font.Name = "Vernada";
-            dataRow.Style.IndentLevel = (object)1;
+            dataRow.IndentLevel = 1;
             dataRow.VerticalAlignment = Excel.Constants.xlCenter;
             startCell.Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlContinuous;
             startCell.Offset[0, 11].Borders[Excel.XlBordersIndex.xlEdgeRight].LineStyle = Excel.XlLineStyle.xlContinuous;
@@ -473,7 +385,7 @@ namespace ForceConnector
             startCell.Offset[0, 11].Value = fld.precision;
             startCell.Offset[0, 11].HorizontalAlignment = Excel.Constants.xlRight;
             startCell.Offset[0, 11].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlDot;
-            // startCell.Offset(0, 12).Value = IIf(fieldinfo.ContainsKey("desc"), fieldinfo.Item("desc"), "")
+           
             if (fieldinfo.ContainsKey("desc"))
             {
                 startCell.Offset[0, 12].Value = fieldinfo["desc"];
