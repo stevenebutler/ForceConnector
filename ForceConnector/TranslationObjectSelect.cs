@@ -43,12 +43,14 @@ namespace ForceConnector
         {
             if (lstObject.SelectedItems is null)
             {
-                MessageBox.Show("You must select a object!");
+                MessageBox.Show("You must select an object!");
             }
             else
             {
                 foreach (ListViewItem itm in lstObject.SelectedItems)
+                {
                     selectedList.Add(itm.Text);
+                }
                 Close();
             }
         }

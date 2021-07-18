@@ -478,7 +478,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:ForceConnector"
         "ProductCode" = "8:{3670594E-8A4F-46AF-953E-8443FD68C4D6}"
-        "PackageCode" = "8:{F9C0048F-083D-4D11-B8A8-C208A2A9B3FE}"
+        "PackageCode" = "8:{3C151B6D-15F1-4A82-9518-AB773F97AF19}"
         "UpgradeCode" = "8:{AB934672-836D-488C-9DC0-665B70E61FD2}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -1263,7 +1263,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_A2F6B02AD48D4AA1AFA3C594ECB7BA12"
             {
-            "SourcePath" = "8:..\\ForceConnector\\obj\\Debug\\ForceConnector.dll"
+            "SourcePath" = "8:..\\ForceConnector\\obj\\Release\\ForceConnector.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_29C6426C53044031AA0CE944C51E0144"
@@ -1287,6 +1287,7 @@
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {
+                "ExcludeFilter" = "8:*.pdb"
                 }
             }
         }

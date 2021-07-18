@@ -4,6 +4,7 @@ using System.Linq;
 using Excel = Microsoft.Office.Interop.Excel;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
+using System.Text;
 
 namespace ForceConnector
 {
@@ -11,6 +12,22 @@ namespace ForceConnector
     {
         public static Dictionary<string, string> langSet = new Dictionary<string, string>() { { "zh_CN", "Chinese(Simplified)" }, { "zh_TW", "Chinese (Traditional)" }, { "da", "Danish" }, { "nl_NL", "Dutch" }, { "en_US", "English" }, { "fi", "Finnish" }, { "fr", "French" }, { "de", "German" }, { "it", "Italian" }, { "ja", "Japanese" }, { "ko", "Korean" }, { "no", "Norwegian" }, { "pt_BR", "Portuguese (Brazil)" }, { "ru", "Russian" }, { "es", "Spanish" }, { "es_MX", "Spanish (Mexico)" }, { "sv", "Swedish" }, { "th", "Thai" } };
         private static Dictionary<int, string> fieldType = new Dictionary<int, string>() { { 0, "String" }, { 1, "Picklist" }, { 2, "Multi Picklist" }, { 3, "Combobox" }, { 4, "Reference" }, { 5, "Base64" }, { 6, "Boolean" }, { 7, "Currency" }, { 8, "Textarea" }, { 9, "Integer" }, { 10, "Double" }, { 11, "Percent" }, { 12, "Phone" }, { 13, "Id" }, { 14, "Date" }, { 15, "Datetime" }, { 16, "Time" }, { 17, "Url" }, { 18, "Email" }, { 19, "Encrypted String" }, { 20, "DataCategoryGroupReference" }, { 21, "Location" }, { 22, "Address" }, { 23, "AnyType" }, { 24, "Json" }, { 25, "Complex Value" }, { 26, "Long" } };
+        private static string[] HeaderLabels = new string[]
+        {
+            "Label",
+            "API Name",
+            "Type",
+            "Custom",
+            "AutoNumber",
+            "Nillable",
+            "Encrypted",
+            "External Id",
+            "Length",
+            "Scale",
+            "Digits",
+            "Precision",
+            "Description"
+        };
 
         public static void DescribeSalesforceObjectsBySOAP()
         {
@@ -188,48 +205,33 @@ namespace ForceConnector
         {
             var headerRow = worksheet.Range["B3:N3"];
             start = worksheet.Range["B4"];
-            // label, api name, type, custom, autonumber, nillable, length, digits, precision, encrypted, externalId      referenceto, picklist -> comments of type
-            headerRow.Font.Bold = (object)true;
+            headerRow.Font.Bold = true;
             headerRow.Font.Name = "Vernada";
-            headerRow.Font.ColorIndex = (object)2;
+            headerRow.Font.ColorIndex = 2;
             headerRow.HorizontalAlignment = Excel.Constants.xlCenter;
             headerRow.VerticalAlignment = Excel.Constants.xlCenter;
-            headerRow.Interior.Color = (object)Information.RGB(0, 176, 240);
-            headerRow.Borders[Excel.XlBordersIndex.xlEdgeTop].LineStyle = Excel.XlLineStyle.xlContinuous;
-            headerRow.Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlDot;
+            headerRow.Interior.Color = Information.RGB(0, 176, 240);
+            headerRow.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            headerRow.Borders[Excel.XlBordersIndex.xlInsideVertical].LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             headerRow.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlDouble;
-            worksheet.Range["B3"].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlContinuous;
-            worksheet.Range["N3"].Borders[Excel.XlBordersIndex.xlEdgeRight].LineStyle = Excel.XlLineStyle.xlContinuous;
-            worksheet.Range["B3"].Value = "Label";
-            worksheet.Range["C3"].Value = "API Name";
-            worksheet.Range["D3"].Value = "Type";
-            worksheet.Range["E3"].Value = "Custom";
-            worksheet.Range["F3"].Value = "AutoNumber";
-            worksheet.Range["G3"].Value = "Nillable";
-            worksheet.Range["H3"].Value = "Encrypted";
-            worksheet.Range["I3"].Value = "External Id";
-            worksheet.Range["J3"].Value = "Length";
-            worksheet.Range["K3"].Value = "Scale";
-            worksheet.Range["L3"].Value = "Digits";
-            worksheet.Range["M3"].Value = "Precision";
-            worksheet.Range["N3"].Value = "Description";
+            headerRow.Value = HeaderLabels;
         }
 
-        public static int renderNamedField(ref Excel.Worksheet worksheet, ref Excel.Range start, string[] namedFieldsOrder, ref Dictionary<string, Partner.Field> standardFields, ref Dictionary<string, Dictionary<string, string>> fieldMeta, int rowPointer, object[,] data)
+        public static int renderNamedField(ref Excel.Worksheet worksheet, ref Excel.Range start, string[] namedFieldsOrder, ref Dictionary<string, Partner.Field> standardFields, ref Dictionary<string, Dictionary<string, string>> fieldMeta, int rowPointer, object[,] data, List<CommentPosition> comments)
         {
             foreach (var fld in namedFieldsOrder)
             {
                 if (standardFields.ContainsKey(fld))
                 {
-                    Dictionary<string, string> fldinfo = fieldMeta.ContainsKey(fld) ? fieldMeta[fld]: null;
-                    populateFieldValues(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields[fld], data);
+                    Dictionary<string, string> fldinfo = fieldMeta.ContainsKey(fld) ? fieldMeta[fld] : null;
+                    populateFieldValues(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields[fld], data, comments);
                     rowPointer = rowPointer + 1;
                 }
             }
             return rowPointer;
         }
 
-        public static int renderStandardField(ref Excel.Worksheet worksheet, ref Excel.Range start, HashSet<string> namedFields, ref Dictionary<string, Partner.Field> standardFields, ref Dictionary<string, Dictionary<string, string>> fieldMeta, int rowPointer, ref int objectCount, ref int numOfPart, int numOfField, string objname, ref System.ComponentModel.BackgroundWorker bgw, object[,] data)
+        public static int renderStandardField(ref Excel.Worksheet worksheet, ref Excel.Range start, HashSet<string> namedFields, ref Dictionary<string, Partner.Field> standardFields, ref Dictionary<string, Dictionary<string, string>> fieldMeta, int rowPointer, ref int objectCount, ref int numOfPart, int numOfField, string objname, ref System.ComponentModel.BackgroundWorker bgw, object[,] data, List<CommentPosition> comments)
         {
             var keys = standardFields.Keys.ToArray();
             Array.Sort(keys);
@@ -238,9 +240,13 @@ namespace ForceConnector
                 if (!namedFields.Contains(key))
                 {
                     int percent = (int)Math.Round(numOfPart * (rowPointer / (double)numOfField)) + numOfPart * objectCount;
+                    if (percent > 100)
+                    {
+                        percent = 100;
+                    }
                     bgw.ReportProgress(percent, "Describe " + objname + " (fields " + rowPointer.ToString() + " / " + numOfField.ToString() + ")");
                     Dictionary<string, string> fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey(key), fieldMeta[key], null);
-                    populateFieldValues(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields[key], data);
+                    populateFieldValues(ref worksheet, ref start, ref fldinfo, rowPointer, standardFields[key], data, comments);
                     rowPointer = rowPointer + 1;
                 }
             }
@@ -248,7 +254,7 @@ namespace ForceConnector
             return rowPointer;
         }
 
-        public static void renderCustomField(ref Excel.Worksheet worksheet, ref Excel.Range start, HashSet<string> namedFields, ref Dictionary<string, Partner.Field> customFields, ref Dictionary<string, Dictionary<string, string>> fieldMeta, int rowPointer, ref int objectCount, ref int numOfPart, int numOfField, string objname, ref System.ComponentModel.BackgroundWorker bgw, object[,] data)
+        public static void renderCustomField(ref Excel.Worksheet worksheet, ref Excel.Range start, HashSet<string> namedFields, ref Dictionary<string, Partner.Field> customFields, ref Dictionary<string, Dictionary<string, string>> fieldMeta, int rowPointer, ref int objectCount, ref int numOfPart, int numOfField, string objname, ref System.ComponentModel.BackgroundWorker bgw, object[,] data, List<CommentPosition> comments)
         {
             var keys = customFields.Keys.ToArray();
             Array.Sort(keys);
@@ -257,17 +263,88 @@ namespace ForceConnector
                 if (!namedFields.Contains(key))
                 {
                     int percent = (int)Math.Round(numOfPart * (rowPointer / (double)numOfField)) + numOfPart * objectCount;
+                    if (percent > 100)
+                    {
+                        percent = 100;
+                    }
                     bgw.ReportProgress(percent, "Describe " + objname + " (fields " + rowPointer.ToString("N0") + " / " + numOfField.ToString("N0") + ")");
                     Dictionary<string, string> fldinfo = (Dictionary<string, string>)Interaction.IIf(fieldMeta.ContainsKey(key), fieldMeta[key], null);
-                    populateFieldValues(ref worksheet, ref start, ref fldinfo, rowPointer, customFields[key], data);
+                    populateFieldValues(ref worksheet, ref start, ref fldinfo, rowPointer, customFields[key], data, comments);
                     rowPointer = rowPointer + 1;
                 }
             }
         }
 
-        public static void populateFieldValues(ref Excel.Worksheet worksheet, ref Excel.Range start, ref Dictionary<string, string> fieldinfo, int rownum, Partner.Field fld, object[,] data)
+        private static string getLabelComment(Dictionary<string, string> fieldinfo)
         {
-            data[rownum, 0] = fld.name;
+            if (fieldinfo != null)
+            {
+                string labels = "";
+                foreach (string key in fieldinfo.Keys)
+                {
+                    if (key != "desc")
+                    {
+                        string trns = fieldinfo[key];
+                        if (trns.Length > 0)
+                            labels = labels + "[" + key + "] " + trns + Constants.vbCrLf;
+                    }
+                }
+                return labels.Length > 0 ? labels : null;
+            }
+            return null;
+
+        }
+
+        private static string getFieldTypeComment(Partner.Field fld)
+        {
+
+            if (fld.type == Partner.fieldType.picklist || fld.type == Partner.fieldType.multipicklist || fld.type == Partner.fieldType.reference)
+            {
+
+                if (fld.type == Partner.fieldType.picklist || fld.type == Partner.fieldType.multipicklist)
+                {
+                    return "Picklist Values :"
+                        + Constants.vbCrLf
+                        + string.Join(Constants.vbCrLf, fld.picklistValues.Select(p => $"{p.label} ({p.value})"));
+                }
+                else
+                {
+                    return "Reference To :"
+                        + Constants.vbCrLf
+                        + string.Join(Constants.vbCrLf, fld.referenceTo);
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
+        public static void populateFieldValues(ref Excel.Worksheet worksheet, ref Excel.Range start, ref Dictionary<string, string> fieldinfo, int rownum, Partner.Field fld, object[,] data, List<CommentPosition> comments)
+        {
+            data[rownum, 0] = fld.label;
+            string labelComment = getLabelComment(fieldinfo);
+            if (labelComment != null)
+            {
+                comments.Add(new CommentPosition
+                {
+                    Comment = labelComment,
+                    Column = 0,
+                    Row = rownum
+                });
+            }
+            string fieldTypeComment = getFieldTypeComment(fld);
+            if (fieldTypeComment != null)
+            {
+                comments.Add(new CommentPosition
+                {
+                    Comment = fieldTypeComment,
+                    Column = 2,
+                    Row = rownum
+                });
+            }
+            data[rownum, 1] = fld.name;
             data[rownum, 2] = fieldType[(int)fld.type];
             data[rownum, 3] = fld.custom ? "Yes" : "No";
             data[rownum, 4] = fld.autoNumber ? "Yes" : "No";
@@ -281,122 +358,22 @@ namespace ForceConnector
             data[rownum, 12] = fieldinfo.ContainsKey("desc") ? fieldinfo["desc"] : "";
         }
 
-        public static void renderField(ref Excel.Worksheet worksheet, ref Excel.Range start, ref Dictionary<string, string> fieldinfo, int rownum, Partner.Field fld)
+        public static void renderComments(ref Excel.Range body, List<CommentPosition> comments)
         {
-            var startCell = start.Offset[rownum, 0];
-            var dataRow = worksheet.Range[startCell, startCell.Offset[0, 12]];
-            dataRow.Borders[Excel.XlBordersIndex.xlEdgeTop].LineStyle = Excel.XlLineStyle.xlContinuous;
-            dataRow.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
-            dataRow.Font.Name = "Vernada";
-            dataRow.IndentLevel = 1;
-            dataRow.VerticalAlignment = Excel.Constants.xlCenter;
-            startCell.Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlContinuous;
-            startCell.Offset[0, 11].Borders[Excel.XlBordersIndex.xlEdgeRight].LineStyle = Excel.XlLineStyle.xlContinuous;
-            startCell.Value = fld.label;
-            if (fieldinfo is object)
+            foreach (var cP in comments)
             {
-                string labels = "";
-                foreach (string key in fieldinfo.Keys)
-                {
-                    if (key != "desc")
-                    {
-                        string trns = fieldinfo[key];
-                        if (trns.Length > 0)
-                            labels = labels + "[" + key + "] " + trns + Constants.vbCrLf;
-                    }
-                }
-
-                if (labels.Length > 0)
-                {
-                    startCell.ClearComments();
-                    startCell.AddComment();
-                    startCell.Comment.Shape.TextFrame.AutoSize = true;
-                    startCell.Comment.Shape.TextFrame.Characters().Font.Bold = (object)false;
-                    startCell.Comment.Shape.TextFrame.Characters().Font.Name = "Consolas";
-                    startCell.Comment.Text(labels);
-                }
+                Excel.Range startCell = body.Cells[cP.Row + 1, cP.Column + 1];
+                int cellRow = startCell.Row;
+                int cellCol = startCell.Column;
+                string coord = $"Cell {cellRow},{cellCol}; {startCell.Rows.Count}x{startCell.Columns.Count}";
+                Console.WriteLine(coord);
+                //startCell.ClearComments();
+                startCell.AddComment(cP.Comment);
+                startCell.Comment.Shape.TextFrame.AutoSize = true;
+                startCell.Comment.Shape.TextFrame.Characters().Font.Bold = false;
+                startCell.Comment.Shape.TextFrame.Characters().Font.Name = "Consolas";
             }
 
-            startCell.Offset[0, 1].Value = fld.name;
-            startCell.Offset[0, 1].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlDot;
-            {
-                var withBlock = startCell.Offset[0, 2];
-                withBlock.Value = fieldType[(int)fld.type];
-                withBlock.Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlDot;
-                if (fld.type == Partner.fieldType.picklist | fld.type == Partner.fieldType.reference)
-                {
-                    withBlock.ClearComments();
-                    withBlock.AddComment();
-                    withBlock.Comment.Shape.TextFrame.AutoSize = true;
-                    withBlock.Comment.Shape.TextFrame.Characters().Font.Bold = (object)false;
-                    withBlock.Comment.Shape.TextFrame.Characters().Font.Name = "Consolas";
-                    string comment = "";
-                    int i = 0;
-                    if (fld.type == Partner.fieldType.picklist)
-                    {
-                        comment = "Pickist Values :" + Constants.vbCrLf;
-                        var picklists = fld.picklistValues;
-                        var loopTo = picklists.Length - 1;
-                        for (i = 0; i <= loopTo; i++)
-                        {
-                            comment = comment + picklists[i].label + " (" + picklists[i].value + ")";
-                            if (i < picklists.Length - 1)
-                                comment = comment + Constants.vbCrLf;
-                        }
-
-                        withBlock.Comment.Text(comment);
-                    }
-                    else
-                    {
-                        comment = "Reference To :" + Constants.vbCrLf;
-                        var refs = fld.referenceTo;
-                        var loopTo1 = refs.Length - 1;
-                        for (i = 0; i <= loopTo1; i++)
-                        {
-                            comment = comment + refs[i];
-                            if (i < refs.Length - 1)
-                                comment = comment + Constants.vbCrLf;
-                        }
-
-                        withBlock.Comment.Text(comment);
-                    }
-                }
-            }
-
-            startCell.Offset[0, 3].Value = fld.custom ? "Yes" : "No";
-            startCell.Offset[0, 3].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlDot;
-            startCell.Offset[0, 4].Value = fld.autoNumber ? "Yes" : "No";
-            startCell.Offset[0, 4].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlDot;
-            startCell.Offset[0, 5].Value = fld.nillable ? "Yes" : "No";
-            startCell.Offset[0, 5].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlDot;
-            startCell.Offset[0, 6].Value = fld.encrypted ? "Yes" : "No";
-            startCell.Offset[0, 6].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlDot;
-            startCell.Offset[0, 7].Value = fld.externalId ? "Yes" : "No";
-            startCell.Offset[0, 7].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlDot;
-            startCell.Offset[0, 8].Value = fld.length;
-            startCell.Offset[0, 8].HorizontalAlignment = Excel.Constants.xlRight;
-            startCell.Offset[0, 8].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlDot;
-            startCell.Offset[0, 9].Value = fld.scale;
-            startCell.Offset[0, 9].HorizontalAlignment = Excel.Constants.xlRight;
-            startCell.Offset[0, 9].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlDot;
-            startCell.Offset[0, 10].Value = fld.digits;
-            startCell.Offset[0, 10].HorizontalAlignment = Excel.Constants.xlRight;
-            startCell.Offset[0, 10].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlDot;
-            startCell.Offset[0, 11].Value = fld.precision;
-            startCell.Offset[0, 11].HorizontalAlignment = Excel.Constants.xlRight;
-            startCell.Offset[0, 11].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlDot;
-           
-            if (fieldinfo.ContainsKey("desc"))
-            {
-                startCell.Offset[0, 12].Value = fieldinfo["desc"];
-            }
-            else
-            {
-                startCell.Offset[0, 12].Value = "";
-            }
-
-            startCell.Offset[0, 12].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Excel.XlLineStyle.xlDot;
-            startCell.Offset[0, 12].Borders[Excel.XlBordersIndex.xlEdgeRight].LineStyle = Excel.XlLineStyle.xlContinuous;
         }
     }
 }

@@ -34,68 +34,70 @@ namespace ForceConnector
         [System.Diagnostics.DebuggerStepThrough()]
         private void InitializeComponent()
         {
-            lstObject = new System.Windows.Forms.ListView();
-            _btnNext = new System.Windows.Forms.Button();
-            _btnNext.Click += new EventHandler(btnNext_Click);
-            _btnCancel = new System.Windows.Forms.Button();
-            _btnCancel.Click += new EventHandler(btnCancel_Click);
-            lblSelectTable = new System.Windows.Forms.Label();
-            SuspendLayout();
+            this.lstObject = new System.Windows.Forms.ListView();
+            this._btnNext = new System.Windows.Forms.Button();
+            this._btnCancel = new System.Windows.Forms.Button();
+            this.lblSelectTable = new System.Windows.Forms.Label();
+            this.SuspendLayout();
             // 
             // lstObject
             // 
-            lstObject.HideSelection = false;
-            lstObject.Location = new System.Drawing.Point(8, 27);
-            lstObject.Margin = new System.Windows.Forms.Padding(2);
-            lstObject.Name = "lstObject";
-            lstObject.Size = new System.Drawing.Size(311, 310);
-            lstObject.TabIndex = 17;
-            lstObject.UseCompatibleStateImageBehavior = false;
+            this.lstObject.HideSelection = false;
+            this.lstObject.Location = new System.Drawing.Point(8, 27);
+            this.lstObject.Margin = new System.Windows.Forms.Padding(2);
+            this.lstObject.Name = "lstObject";
+            this.lstObject.Size = new System.Drawing.Size(311, 310);
+            this.lstObject.TabIndex = 17;
+            this.lstObject.UseCompatibleStateImageBehavior = false;
             // 
-            // btnNext
+            // _btnNext
             // 
-            _btnNext.Location = new System.Drawing.Point(227, 346);
-            _btnNext.Margin = new System.Windows.Forms.Padding(2);
-            _btnNext.Name = "_btnNext";
-            _btnNext.Size = new System.Drawing.Size(91, 31);
-            _btnNext.TabIndex = 16;
-            _btnNext.Text = "Next >";
-            _btnNext.UseVisualStyleBackColor = true;
+            this._btnNext.Location = new System.Drawing.Point(227, 346);
+            this._btnNext.Margin = new System.Windows.Forms.Padding(2);
+            this._btnNext.Name = "_btnNext";
+            this._btnNext.Size = new System.Drawing.Size(91, 31);
+            this._btnNext.TabIndex = 16;
+            this._btnNext.Text = "Next >";
+            this._btnNext.UseVisualStyleBackColor = true;
+            this._btnNext.Click += new System.EventHandler(this.btnNext_Click);
             // 
-            // btnCancel
+            // _btnCancel
             // 
-            _btnCancel.Location = new System.Drawing.Point(8, 346);
-            _btnCancel.Margin = new System.Windows.Forms.Padding(2);
-            _btnCancel.Name = "_btnCancel";
-            _btnCancel.Size = new System.Drawing.Size(91, 31);
-            _btnCancel.TabIndex = 15;
-            _btnCancel.Text = "Cancel";
-            _btnCancel.UseVisualStyleBackColor = true;
+            this._btnCancel.Location = new System.Drawing.Point(8, 346);
+            this._btnCancel.Margin = new System.Windows.Forms.Padding(2);
+            this._btnCancel.Name = "_btnCancel";
+            this._btnCancel.Size = new System.Drawing.Size(91, 31);
+            this._btnCancel.TabIndex = 15;
+            this._btnCancel.Text = "Cancel";
+            this._btnCancel.UseVisualStyleBackColor = true;
+            this._btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // lblSelectTable
             // 
-            lblSelectTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.0f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, Conversions.ToByte(0));
-            lblSelectTable.Location = new System.Drawing.Point(9, 5);
-            lblSelectTable.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            lblSelectTable.Name = "lblSelectTable";
-            lblSelectTable.Size = new System.Drawing.Size(145, 20);
-            lblSelectTable.TabIndex = 14;
-            lblSelectTable.Text = "Select the Objects :";
-            lblSelectTable.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblSelectTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSelectTable.Location = new System.Drawing.Point(9, 5);
+            this.lblSelectTable.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblSelectTable.Name = "lblSelectTable";
+            this.lblSelectTable.Size = new System.Drawing.Size(145, 20);
+            this.lblSelectTable.TabIndex = 14;
+            this.lblSelectTable.Text = "Select the Objects :";
+            this.lblSelectTable.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // TranslationObjectSelect
             // 
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            ClientSize = new System.Drawing.Size(329, 387);
-            Controls.Add(lstObject);
-            Controls.Add(_btnNext);
-            Controls.Add(_btnCancel);
-            Controls.Add(lblSelectTable);
-            Margin = new System.Windows.Forms.Padding(2);
-            Name = "TranslationObjectSelect";
-            Text = "Select Translation Target Objects";
-            Load += new EventHandler(TranslationObjectSelect_Load);
-            ResumeLayout(false);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.ClientSize = new System.Drawing.Size(329, 387);
+            this.Controls.Add(this.lstObject);
+            this.Controls.Add(this._btnNext);
+            this.Controls.Add(this._btnCancel);
+            this.Controls.Add(this.lblSelectTable);
+            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Name = "TranslationObjectSelect";
+            this.Text = "Select Translation Target Objects";
+            this.TopMost = true;
+            this.Load += new System.EventHandler(this.TranslationObjectSelect_Load);
+            this.ResumeLayout(false);
+
         }
 
         internal System.Windows.Forms.ListView lstObject;

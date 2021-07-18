@@ -92,7 +92,7 @@ namespace ForceConnector
                 worksheet = (Excel.Worksheet)workbook.ActiveSheet;
                 excelApp.StatusBar = "Describe Custom Objects...";
                 setControlText(btnAction, "Wait...");
-                bgw.ReportProgress(0, "Please wait for initialize...");
+                bgw.ReportProgress(0, "Please wait for initialization to complete...");
                 METAAPI.getTranslations(ref m_langSet);
                 if (m_langSet.Count > 0)
                     hasTranslation = true;
@@ -166,13 +166,14 @@ namespace ForceConnector
                     // Then the standard fields
                     // Then the custom fields
                     object[,] data = new object[numOfField, 13];
+                    List<CommentPosition> comments = new List<CommentPosition>();
 
-                    rowPointer = DescribeCustomObject.renderNamedField(ref worksheet, ref start, namedFieldsOrder, ref standardFields, ref fieldMeta, rowPointer, data);
+                    rowPointer = DescribeCustomObject.renderNamedField(ref worksheet, ref start, namedFieldsOrder, ref standardFields, ref fieldMeta, rowPointer, data, comments);
                     var argbgw1 = bgw;
-                    rowPointer = DescribeCustomObject.renderStandardField(ref worksheet, ref start, namedFields, ref standardFields, ref fieldMeta, rowPointer, ref objectCount, ref numOfPart, numOfField, objname, ref argbgw1, data);
+                    rowPointer = DescribeCustomObject.renderStandardField(ref worksheet, ref start, namedFields, ref standardFields, ref fieldMeta, rowPointer, ref objectCount, ref numOfPart, numOfField, objname, ref argbgw1, data, comments);
                     bgw = argbgw1;
                     var argbgw2 = bgw;
-                    DescribeCustomObject.renderCustomField(ref worksheet, ref start, namedFields, ref customFields, ref fieldMeta, rowPointer, ref objectCount, ref numOfPart, numOfField, objname, ref argbgw2, data);
+                    DescribeCustomObject.renderCustomField(ref worksheet, ref start, namedFields, ref customFields, ref fieldMeta, rowPointer, ref objectCount, ref numOfPart, numOfField, objname, ref argbgw2, data, comments);
 
                     Excel.Range rng = worksheet.Range[start, start.Offset[numOfField - 1, 12]];
 
@@ -185,10 +186,10 @@ namespace ForceConnector
                     rng.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
                     rng.Borders[Excel.XlBordersIndex.xlInsideVertical].LineStyle = Excel.XlLineStyle.xlDot;
                     rng.IndentLevel = 1;
+                    rng.Font.Name = "Vernada";
 
-                    // TODO: Add comments on fields that require them:
-                    // * Picklist, references
-                    // * Translations?
+                    DescribeCustomObject.renderComments(ref rng, comments);
+                    
                     bgw = argbgw2;
 
 
@@ -202,6 +203,10 @@ namespace ForceConnector
                     }
 
                     percent = (int)Math.Round(numOfPart * (rowPointer / (double)numOfField)) + numOfPart * objectCount;
+                    if (percent > 100)
+                    {
+                        percent = 100;
+                    }
                     objectCount = objectCount + 1;
                 }
 
