@@ -139,9 +139,9 @@ namespace ForceConnector
             RESTful.Field field_obj;
             oneeachrow = false;  // for "on" joins
             jw = 2;
-
+            
             // build-up where statements
-            while (Operators.ConditionalCompareObjectNotEqual(g_table.Cells[1, jw].value, "", false)) // if it's not empty, assume its more query
+            while (!string.IsNullOrWhiteSpace(g_table.Cells[1, jw].value)) // if it's not empty, assume its more query
             {
                 var apiCell = g_table.Cells[1, jw];
                 string apiVal = Convert.ToString(apiCell.Value);
@@ -234,22 +234,24 @@ namespace ForceConnector
                     // (field inclqudes ('this') or field includes ('that'))
                     // (field excludes ('this') or field excludes ('that'))
                     // 
-                    object values;
-                    values = Strings.Split(vlu, ",");
                     // if values is empty and vlu is the nul string, still need to assemble the clause
-                    string clause;
-                    clause = "";
-                    if (Information.UBound((Array)values) < 0 && string.IsNullOrEmpty(vlu)) // case of one empty value
+                    string clause = "";
+                    if (string.IsNullOrEmpty(vlu)) // case of one empty value
                     {
-                        clause = field_obj.name + " " + opr + "''";
                         if (field_obj.type == "date") // special case, compare value is an empty date 5.49
                         {
-                            clause = field_obj.name + " " + opr + " null";
+                            clause = $"{field_obj.name} {opr} null";
+                        }
+                        else
+                        {
+                            clause = $"{field_obj.name} {opr} ''";
                         }
                     }
                     else
                     {
-                        foreach (string vu2 in (IEnumerable)values) // works for one or many non nul values
+                        string[] values = Strings.Split(vlu, ",");
+
+                        foreach (string vu2 in values) // works for one or many non nul values
                         {
                             string str;
                             string referTo = "";
@@ -284,13 +286,17 @@ namespace ForceConnector
                                 clause = clause + field_obj.name + " " + opr + " " + fmtVal;
                             } // assemble the clause
                         }
+                        if (values.Length > 1)
+                        {
+                            clause = $"({clause})"; // cant hurt
+                        }
                     }
 
-                    if (Information.UBound((Array)values) > 0)
-                        clause = "(" + clause + ")"; // cant hurt
                     where = where + clause; // : Debug.Print where
-                    if (Operators.ConditionalCompareObjectNotEqual(g_table.Cells[1, (jw + 3)].value, "", false))
+                    if (!string.IsNullOrWhiteSpace(g_table.Cells[1, (jw + 3)].value))
+                    {
                         where = where + " and ";
+                    }
                 } // to be ready for more
 
                 jw = jw + 3; // slide over to grab the next three cells
