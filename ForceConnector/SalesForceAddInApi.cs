@@ -47,5 +47,9 @@ namespace ForceConnector
         {
             ForceConnector.DeleteSelectedRecords();
         }
+        public void RefreshTableDataApi()
+        {
+            ForceConnector.RefreshTableData();
+        }
     }
 }

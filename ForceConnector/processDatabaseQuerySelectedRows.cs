@@ -16,6 +16,8 @@ namespace ForceConnector
             _btnAction.Name = "btnAction";
         }
 
+        public bool RefreshAll { get; set; }
+
         private string statusText = "";
         private Excel.Application excelApp;
         private Excel.Workbook workbook;
@@ -104,6 +106,40 @@ namespace ForceConnector
                 {
                     goto errors;
                 }
+                if (RefreshAll)
+                {
+                    // Pick all rows in the table that have a valid sf id
+                    g_ids.Select();
+                    object values = g_ids.Value;
+                    if (values is object[,] objarr)
+                    {
+                        int max = g_ids.Rows.Count;
+                        for (int ii = 1; ii <= max; ii++)
+                        {
+                            if (string.IsNullOrWhiteSpace(Convert.ToString(objarr[ii, 1])))
+                            {
+                                if (ii == 1)
+                                {
+                                    statusText = "No valid rows can be refreshed";
+                                    goto errors;
+                                }
+                                Excel.Range rng = worksheet.Range[g_ids[1], g_ids[ii - 1]];
+                                rng.Select();
+
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (string.IsNullOrWhiteSpace(Convert.ToString(values)))
+                        {
+                            statusText = "No valid rows selected";
+                            goto errors;
+                        }
+
+                    }
+                }
 
                 bgw.ReportProgress(0, "Build Query String...");
                 List<string> sels = headerFields.Select(x => x.name).ToList();
@@ -140,10 +176,11 @@ namespace ForceConnector
 
                     chunk.Interior.ColorIndex = 36; // show off...
                     excelApp.ScreenUpdating = false;
-                    bool localquerySelectedRow() { 
-                        var argbgw = bgw; 
+                    bool localquerySelectedRow()
+                    {
+                        var argbgw = bgw;
                         var ret = Operation.querySelectedRow(ref excelApp, ref worksheet, ref g_header, ref g_body, ref g_ids, ref g_objectType, ref g_sfd, sels, ref chunk, ref outrow, ref totals, ref argbgw, headerFields, fieldLabelMap, fieldMap);
-                        bgw = argbgw; 
+                        bgw = argbgw;
                         return ret;
                     }
 

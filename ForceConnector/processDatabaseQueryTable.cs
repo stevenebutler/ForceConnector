@@ -97,6 +97,7 @@ namespace ForceConnector
                     goto errors;
                 }
 
+
                 string where = "";
                 List<string> sels = null;
                 Excel.Range refIds = null;

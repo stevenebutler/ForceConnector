@@ -106,6 +106,12 @@ namespace ForceConnector
             CheckLoginAndAct(Operation.QueryData, "QueryTableData");
         }
 
+        public static void RefreshTableData()
+        {
+            CheckLoginAndAct(Operation.RefreshData, "RefreshTableData");
+        }
+
+
         public static void DeleteSelectedRecords()
         {
             CheckLoginAndAct(Operation.DeleteRecords, "DeleteSelectedRecords Exception");

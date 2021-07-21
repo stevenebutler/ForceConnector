@@ -27,6 +27,21 @@ namespace ForceConnector
             }
         }
 
+        public static void RefreshData()
+        {
+            try
+            {
+                var frm = new processDatabaseQuerySelectedRows();
+                frm.RefreshAll = true;
+                frm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                Interaction.MsgBox(ex.Message, Title: "QueryData Exception" + Constants.vbCrLf + ex.Message);
+            }
+        }
+
+
         public static void UpdateCells()
         {
             if (RegDB.RegQueryBoolValue(ForceConnector.SKIPHIDDEN))
@@ -857,7 +872,9 @@ namespace ForceConnector
                 //        }
                 //    }
                 //}
-                ApplyDataToRange(worksheet, todo.Row, g_body.Column, headerFields.Select(x => x.name).ToList(), qrs, g_sfd);
+
+                int skipColumn = g_ids.Column;
+                ApplyDataToRange(worksheet, todo.Row, g_body.Column, headerFields.Select(x => x.name).ToList(), qrs, g_sfd, skipColumn);
                 outrow += qrs.Length;
                 percent = (int)Math.Round(outrow / (double)totals * 100d);
                 if (percent > 100)
@@ -1016,8 +1033,9 @@ namespace ForceConnector
                 if (g_start.Comment != null)
                 {
                     g_objectType = g_start.Comment.Text();
+                    
                 }
-                else if (g_start.Value != null)
+                if ((string.IsNullOrEmpty(g_objectType) || g_objectType.Contains(" ")) && g_start.Value != null)
                 {
                     g_objectType = g_start.Value;
                 }
@@ -1207,11 +1225,21 @@ namespace ForceConnector
                 return Array.Empty<string>();
             }
         }
-        public static void ApplyDataToRange(Excel.Worksheet worksheet, long startRow, int startColumn, List<string> fieldOrder, IDictionary[] objects, RESTful.DescribeSObjectResult g_sfd)
+        public static void ApplyDataToRange(Excel.Worksheet worksheet, long startRow, int startColumn, List<string> fieldOrder, IDictionary[] objects, RESTful.DescribeSObjectResult g_sfd, int skipColumn = -1)
         {
             if (objects.Length <= 0)
             {
                 return;
+            }
+            if (skipColumn != -1)
+            {
+                if (skipColumn != startColumn)
+                {
+                    throw new ArgumentException("Id column must be first column in range to update rows");
+                }
+                startColumn++;
+                fieldOrder = fieldOrder.Skip(1).ToList();
+
             }
             var fields = Util.getFieldMap(g_sfd.fields);
             long maxRow = objects.Length + startRow - 1;
