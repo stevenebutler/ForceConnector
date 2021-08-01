@@ -154,7 +154,7 @@ namespace ForceConnector
             RESTful.Field field_obj;
             oneeachrow = false;  // for "on" joins
             jw = 2;
-            
+
             // build-up where statements
             while (!string.IsNullOrWhiteSpace(g_table.Cells[1, jw].value)) // if it's not empty, assume its more query
             {
@@ -440,6 +440,13 @@ namespace ForceConnector
                 int startCol = todo.Column;
                 int endCol = startCol + todo.Columns.Count - 1;
 
+                var todoData = todo.Value;
+                if (!(todoData is object[,]))
+                {
+                    // Because Excel based arrays are 1 based we put our data at position 1, 1
+                    todoData = new object[2, 2] { { null, null }, { null, todoData } };
+                }
+
                 for (var i = 0; i < idlist.Length; i++)
                 {
 
@@ -448,6 +455,7 @@ namespace ForceConnector
                     recordSet.Add("Id", idlist[i]);
                     for (int j = startCol; j <= endCol; j++)
                     {
+
                         var field = headerFields[j - tableStart];
                         // field name
                         string fld = field.name;
@@ -455,8 +463,9 @@ namespace ForceConnector
                         // only updatable columns add to recordSet
                         if (!field.updateable)
                             goto nextcol;
-                        Excel.Range target = todo.Cells[i + 1, j - startCol + 1];
-                        recordSet.Add(fld, Util.toVBtype(target, field));
+                        var targetVal = todoData[i + 1, j - startCol + 1];
+                        // Excel.Range target = todo.Cells[i + 1, j - startCol + 1];
+                        recordSet.Add(fld, Util.toSalesforceType(targetVal, field));
                     nextcol:
                         ;
                     }
@@ -532,7 +541,7 @@ namespace ForceConnector
                     foreach (RESTful.SalesforceError err in s.errors)
                         errMsg = Conversions.ToString(Operators.ConcatenateObject(Operators.ConcatenateObject(Operators.ConcatenateObject(Operators.ConcatenateObject(errMsg, err.statusCode), ", "), err.message), '\n'));
                     firstcel.Comment.Text(errMsg);
-                    firstcel.Comment.Shape.Height = 100f; // is this enough
+                    // firstcel.Comment.Shape.Height = 100f; // is this enough
                     someFailed = true; // will message this later
                 }
                 else
@@ -1033,7 +1042,7 @@ namespace ForceConnector
                 if (g_start.Comment != null)
                 {
                     g_objectType = g_start.Comment.Text();
-                    
+
                 }
                 if ((string.IsNullOrEmpty(g_objectType) || g_objectType.Contains(" ")) && g_start.Value != null)
                 {

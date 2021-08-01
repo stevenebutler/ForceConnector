@@ -386,16 +386,13 @@ namespace ForceConnector
             ErrRef = -2146826265,
             ErrValue = -2146826273
         }
-        // 
-        // look at the field type and variant type, cast the into a return value
-        // 
-        public static object toVBtype(Range cel, RESTful.Field field)
+
+        public static object toSalesforceType(object val, RESTful.Field field)
         {
-            object toVBtypeRet = default;
-            object val = cel.Value;
+            object toSalesforceTypeRet = default;
             if (val is Int32 cvErr)
             {
-                switch ((CVErrEnum) cvErr)
+                switch ((CVErrEnum)cvErr)
                 {
                     case CVErrEnum.ErrDiv0: return "#DIV/0!";
                     case CVErrEnum.ErrGettingData: return "#DATA";
@@ -408,7 +405,7 @@ namespace ForceConnector
                     default: return $"#UNKNOWN {cvErr}";
                 }
                 // Value is an error
-                
+
             }
             // empty cell is null - special case
             if (string.IsNullOrEmpty(Conversions.ToString(val)))
@@ -422,13 +419,13 @@ namespace ForceConnector
                     {
                         int i;
                         i = (int)Math.Round(Conversion.Int(Conversion.Val(val)));
-                        toVBtypeRet = i;
+                        toSalesforceTypeRet = i;
                         break;
                     }
 
                 case "percent":
                     {
-                        toVBtypeRet = (object)Conversion.Val(val); // normal case
+                        toSalesforceTypeRet = (object)Conversion.Val(val); // normal case
                         break;
                     }
 
@@ -436,19 +433,19 @@ namespace ForceConnector
                 case "currency":
                     {
                         // val() does not use i18n conventions, use CDbl instead, 6.08
-                        
-                        toVBtypeRet = Conversions.ToDouble(val);  // normal case
-                                                                                      // 6.01 truncate to the number of digits, Field3 likes it's numbers formated
+
+                        toSalesforceTypeRet = Conversions.ToDouble(val);  // normal case
+                                                                  // 6.01 truncate to the number of digits, Field3 likes it's numbers formated
                         if (field.scale == 0)
                         {
-                            toVBtypeRet = Conversion.Int(toVBtypeRet);
+                            toSalesforceTypeRet = Conversion.Int(toSalesforceTypeRet);
                         }
                         else // If (field.Scale > 0) Then
                         {
                             int z = Strings.InStr(Conversions.ToString(val), Conversions.ToString(ThisAddIn.excelApp.International[XlApplicationInternational.xlDecimalSeparator]));
                             if (z > 0)  // need to remove any extra decimal places
                             {
-                                toVBtypeRet = Conversions.ToDouble(Strings.Left(Conversions.ToString(val), z + field.scale));
+                                toSalesforceTypeRet = Conversions.ToDouble(Strings.Left(Conversions.ToString(val), z + field.scale));
                             }
                         }
 
@@ -465,11 +462,11 @@ namespace ForceConnector
                             {
                                 typeToFormat = "s";
                             }
-                            toVBtypeRet = dt.ToString(typeToFormat);
+                            toSalesforceTypeRet = dt.ToString(typeToFormat);
                         }
                         else
                         {
-                            toVBtypeRet = val;
+                            toSalesforceTypeRet = val;
                         }
 
                         break;
@@ -477,7 +474,7 @@ namespace ForceConnector
 
                 case "boolean":
                     {
-                        toVBtypeRet = val;
+                        toSalesforceTypeRet = Convert.ToBoolean(val);
                         break;
                     }
 
@@ -488,14 +485,14 @@ namespace ForceConnector
                         // need to map a name into the actual ID prior to passing to update
                         // ref_id routine will return the passed in value if we don't map
                         // the ReferenceTo type provided (User,Group,Profile... etc) as a fallback
-                        toVBtypeRet = val;
+                        toSalesforceTypeRet = val;
                         if (field.referenceTo.Length > 0)
                         {
-                            toVBtypeRet = Util.NameToId(Conversions.ToString(val), field.referenceTo[0]);
+                            toSalesforceTypeRet = Util.NameToId(Conversions.ToString(val), field.referenceTo[0]);
                         }
-                        if (!(Strings.Len(toVBtypeRet) == 15 || Strings.Len(toVBtypeRet) == 18))
+                        if (!(Strings.Len(toSalesforceTypeRet) == 15 || Strings.Len(toSalesforceTypeRet) == 18))
                         {
-                            throw new Exception($"Invalid Id format for {field.name} has value {val} translated to {toVBtypeRet}");
+                            throw new Exception($"Invalid Id format for {field.name} has value {val} translated to {toSalesforceTypeRet}");
                         } // all other types (so far),  work with this "string" type
 
                         break;
@@ -503,12 +500,19 @@ namespace ForceConnector
 
                 default:
                     {
-                        toVBtypeRet = "" + val.ToString();
+                        toSalesforceTypeRet = "" + val.ToString();
                         break;
                     }
             }
 
-            return toVBtypeRet;
+            return toSalesforceTypeRet;
+        }
+        // 
+        // look at the field type and variant type, cast the into a return value
+        // 
+        public static object toVBtype(Range cel, RESTful.Field field)
+        {
+            return toSalesforceType(cel.Value, field);
         }
 
         public static void ScrollAtBottom(ref Window win, long outrow)
