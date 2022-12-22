@@ -66,6 +66,7 @@
     </BootstrapperPackage>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <PropertyGroup>
     <!--

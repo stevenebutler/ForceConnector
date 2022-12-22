@@ -53,7 +53,7 @@ namespace ForceConnector
             drawWizard(ref rng, ref excelApp, ref argflds);
 
             // Wizard Step 4 of 4, Add Query Clauses
-            var step4 = new frmWizardStep4(ref step3.mapField, rng);
+            var step4 = new frmWizardStep4(step3.mapField, rng);
             step4.ShowDialog();
             if (!step4.complete)
                 goto done;
@@ -66,7 +66,8 @@ namespace ForceConnector
         {
             try
             {
-                Excel.Range rnData = excelApp.InputBox("Where do you want to put the Sforce Table Query?", "Table Query Wizard - Step 1 of 4", "$A$1", Type: (object)8);
+                var address = excelApp.ActiveWindow.RangeSelection[1,1].AddressLocal;
+                Excel.Range rnData = excelApp.InputBox("Where do you want to put the Sforce Table Query?", "Table Query Wizard - Step 1 of 4", address, Type: (object)8);
                 if (rnData == null)
                     return null;
                 Information.Err().Clear();

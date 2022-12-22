@@ -65,10 +65,10 @@ namespace ForceConnector
             // lblUsername
             // 
             this.lblUsername.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblUsername.Location = new System.Drawing.Point(11, 121);
-            this.lblUsername.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblUsername.Location = new System.Drawing.Point(13, 139);
+            this.lblUsername.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblUsername.Name = "lblUsername";
-            this.lblUsername.Size = new System.Drawing.Size(122, 17);
+            this.lblUsername.Size = new System.Drawing.Size(123, 26);
             this.lblUsername.TabIndex = 1;
             this.lblUsername.Text = "Username :";
             this.lblUsername.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -76,10 +76,10 @@ namespace ForceConnector
             // lblPassword
             // 
             this.lblPassword.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPassword.Location = new System.Drawing.Point(11, 153);
-            this.lblPassword.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblPassword.Location = new System.Drawing.Point(13, 187);
+            this.lblPassword.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblPassword.Name = "lblPassword";
-            this.lblPassword.Size = new System.Drawing.Size(122, 17);
+            this.lblPassword.Size = new System.Drawing.Size(123, 18);
             this.lblPassword.TabIndex = 2;
             this.lblPassword.Text = "Password :";
             this.lblPassword.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -87,10 +87,10 @@ namespace ForceConnector
             // labelDestination
             // 
             this.labelDestination.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelDestination.Location = new System.Drawing.Point(11, 86);
-            this.labelDestination.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelDestination.Location = new System.Drawing.Point(13, 102);
+            this.labelDestination.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelDestination.Name = "labelDestination";
-            this.labelDestination.Size = new System.Drawing.Size(122, 17);
+            this.labelDestination.Size = new System.Drawing.Size(123, 23);
             this.labelDestination.TabIndex = 3;
             this.labelDestination.Text = "Destination :";
             this.labelDestination.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -98,10 +98,10 @@ namespace ForceConnector
             // lblVersion
             // 
             this.lblVersion.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblVersion.Location = new System.Drawing.Point(272, 86);
-            this.lblVersion.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblVersion.Location = new System.Drawing.Point(341, 104);
+            this.lblVersion.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(42, 17);
+            this.lblVersion.Size = new System.Drawing.Size(39, 22);
             this.lblVersion.TabIndex = 4;
             this.lblVersion.Text = "API :";
             this.lblVersion.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -109,29 +109,29 @@ namespace ForceConnector
             // txtUsername
             // 
             this.txtUsername.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtUsername.Location = new System.Drawing.Point(133, 119);
-            this.txtUsername.Margin = new System.Windows.Forms.Padding(4);
+            this.txtUsername.Location = new System.Drawing.Point(150, 139);
+            this.txtUsername.Margin = new System.Windows.Forms.Padding(2);
             this.txtUsername.Name = "txtUsername";
-            this.txtUsername.Size = new System.Drawing.Size(251, 24);
+            this.txtUsername.Size = new System.Drawing.Size(160, 24);
             this.txtUsername.TabIndex = 5;
             // 
             // txtPassword
             // 
             this.txtPassword.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPassword.Location = new System.Drawing.Point(133, 151);
-            this.txtPassword.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPassword.Location = new System.Drawing.Point(150, 181);
+            this.txtPassword.Margin = new System.Windows.Forms.Padding(2);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
-            this.txtPassword.Size = new System.Drawing.Size(251, 24);
+            this.txtPassword.Size = new System.Drawing.Size(160, 24);
             this.txtPassword.TabIndex = 6;
             // 
             // lblSecurityKey
             // 
             this.lblSecurityKey.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSecurityKey.Location = new System.Drawing.Point(11, 185);
-            this.lblSecurityKey.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblSecurityKey.Location = new System.Drawing.Point(10, 226);
+            this.lblSecurityKey.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblSecurityKey.Name = "lblSecurityKey";
-            this.lblSecurityKey.Size = new System.Drawing.Size(122, 17);
+            this.lblSecurityKey.Size = new System.Drawing.Size(130, 23);
             this.lblSecurityKey.TabIndex = 7;
             this.lblSecurityKey.Text = "Security Token :";
             this.lblSecurityKey.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -139,11 +139,11 @@ namespace ForceConnector
             // txtSecurityToken
             // 
             this.txtSecurityToken.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSecurityToken.Location = new System.Drawing.Point(133, 183);
-            this.txtSecurityToken.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecurityToken.Location = new System.Drawing.Point(150, 226);
+            this.txtSecurityToken.Margin = new System.Windows.Forms.Padding(2);
             this.txtSecurityToken.Name = "txtSecurityToken";
             this.txtSecurityToken.PasswordChar = '*';
-            this.txtSecurityToken.Size = new System.Drawing.Size(251, 24);
+            this.txtSecurityToken.Size = new System.Drawing.Size(160, 24);
             this.txtSecurityToken.TabIndex = 8;
             // 
             // cmbDestination
@@ -153,10 +153,10 @@ namespace ForceConnector
             this.cmbDestination.Items.AddRange(new object[] {
             "Production",
             "Sandbox"});
-            this.cmbDestination.Location = new System.Drawing.Point(133, 84);
-            this.cmbDestination.Margin = new System.Windows.Forms.Padding(4);
+            this.cmbDestination.Location = new System.Drawing.Point(150, 101);
+            this.cmbDestination.Margin = new System.Windows.Forms.Padding(2);
             this.cmbDestination.Name = "cmbDestination";
-            this.cmbDestination.Size = new System.Drawing.Size(100, 24);
+            this.cmbDestination.Size = new System.Drawing.Size(160, 24);
             this.cmbDestination.TabIndex = 9;
             this.cmbDestination.Text = "Production";
             // 
@@ -169,20 +169,20 @@ namespace ForceConnector
             "50",
             "49",
             "48"});
-            this.cmbVersion.Location = new System.Drawing.Point(313, 84);
-            this.cmbVersion.Margin = new System.Windows.Forms.Padding(4);
+            this.cmbVersion.Location = new System.Drawing.Point(394, 101);
+            this.cmbVersion.Margin = new System.Windows.Forms.Padding(2);
             this.cmbVersion.Name = "cmbVersion";
-            this.cmbVersion.Size = new System.Drawing.Size(71, 24);
+            this.cmbVersion.Size = new System.Drawing.Size(43, 24);
             this.cmbVersion.TabIndex = 10;
             this.cmbVersion.Text = "51";
             // 
             // _btnLogin
             // 
             this._btnLogin.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._btnLogin.Location = new System.Drawing.Point(284, 215);
-            this._btnLogin.Margin = new System.Windows.Forms.Padding(4);
+            this._btnLogin.Location = new System.Drawing.Point(358, 271);
+            this._btnLogin.Margin = new System.Windows.Forms.Padding(2);
             this._btnLogin.Name = "_btnLogin";
-            this._btnLogin.Size = new System.Drawing.Size(100, 30);
+            this._btnLogin.Size = new System.Drawing.Size(79, 36);
             this._btnLogin.TabIndex = 11;
             this._btnLogin.Text = "Login";
             this._btnLogin.UseVisualStyleBackColor = true;
@@ -191,10 +191,10 @@ namespace ForceConnector
             // _btnCancel
             // 
             this._btnCancel.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._btnCancel.Location = new System.Drawing.Point(86, 267);
-            this._btnCancel.Margin = new System.Windows.Forms.Padding(4);
+            this._btnCancel.Location = new System.Drawing.Point(274, 326);
+            this._btnCancel.Margin = new System.Windows.Forms.Padding(2);
             this._btnCancel.Name = "_btnCancel";
-            this._btnCancel.Size = new System.Drawing.Size(100, 30);
+            this._btnCancel.Size = new System.Drawing.Size(84, 32);
             this._btnCancel.TabIndex = 12;
             this._btnCancel.Text = "Cancel";
             this._btnCancel.UseVisualStyleBackColor = true;
@@ -204,7 +204,8 @@ namespace ForceConnector
             // 
             this._usingOAuth2.AutoSize = true;
             this._usingOAuth2.Checked = true;
-            this._usingOAuth2.Location = new System.Drawing.Point(9, 19);
+            this._usingOAuth2.Location = new System.Drawing.Point(4, 21);
+            this._usingOAuth2.Margin = new System.Windows.Forms.Padding(2);
             this._usingOAuth2.Name = "_usingOAuth2";
             this._usingOAuth2.Size = new System.Drawing.Size(99, 21);
             this._usingOAuth2.TabIndex = 13;
@@ -216,7 +217,8 @@ namespace ForceConnector
             // _usingSOAP
             // 
             this._usingSOAP.AutoSize = true;
-            this._usingSOAP.Location = new System.Drawing.Point(9, 41);
+            this._usingSOAP.Location = new System.Drawing.Point(4, 44);
+            this._usingSOAP.Margin = new System.Windows.Forms.Padding(2);
             this._usingSOAP.Name = "_usingSOAP";
             this._usingSOAP.Size = new System.Drawing.Size(169, 21);
             this._usingSOAP.TabIndex = 14;
@@ -228,9 +230,11 @@ namespace ForceConnector
             // 
             this.loginUsing.Controls.Add(this._usingOAuth2);
             this.loginUsing.Controls.Add(this._usingSOAP);
-            this.loginUsing.Location = new System.Drawing.Point(76, 5);
+            this.loginUsing.Location = new System.Drawing.Point(81, 11);
+            this.loginUsing.Margin = new System.Windows.Forms.Padding(2);
             this.loginUsing.Name = "loginUsing";
-            this.loginUsing.Size = new System.Drawing.Size(180, 68);
+            this.loginUsing.Padding = new System.Windows.Forms.Padding(2);
+            this.loginUsing.Size = new System.Drawing.Size(207, 75);
             this.loginUsing.TabIndex = 15;
             this.loginUsing.TabStop = false;
             this.loginUsing.Text = "Login Using";
@@ -239,10 +243,10 @@ namespace ForceConnector
             // 
             this._btnNext.Enabled = false;
             this._btnNext.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._btnNext.Location = new System.Drawing.Point(209, 267);
-            this._btnNext.Margin = new System.Windows.Forms.Padding(4);
+            this._btnNext.Location = new System.Drawing.Point(362, 326);
+            this._btnNext.Margin = new System.Windows.Forms.Padding(2);
             this._btnNext.Name = "_btnNext";
-            this._btnNext.Size = new System.Drawing.Size(100, 30);
+            this._btnNext.Size = new System.Drawing.Size(76, 32);
             this._btnNext.TabIndex = 16;
             this._btnNext.Text = "Next";
             this._btnNext.UseVisualStyleBackColor = true;
@@ -252,20 +256,21 @@ namespace ForceConnector
             // 
             this.responseBox.BackColor = System.Drawing.SystemColors.Control;
             this.responseBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.responseBox.Location = new System.Drawing.Point(16, 215);
+            this.responseBox.Location = new System.Drawing.Point(13, 271);
+            this.responseBox.Margin = new System.Windows.Forms.Padding(2);
             this.responseBox.Multiline = true;
             this.responseBox.Name = "responseBox";
-            this.responseBox.Size = new System.Drawing.Size(230, 30);
+            this.responseBox.Size = new System.Drawing.Size(326, 36);
             this.responseBox.TabIndex = 17;
             // 
             // PictureBox1
             // 
             this.PictureBox1.Image = global::ForceConnector.My.Resources.Resources.imgres;
             this.PictureBox1.InitialImage = global::ForceConnector.My.Resources.Resources.imgres;
-            this.PictureBox1.Location = new System.Drawing.Point(8, 9);
-            this.PictureBox1.Margin = new System.Windows.Forms.Padding(4);
+            this.PictureBox1.Location = new System.Drawing.Point(11, 21);
+            this.PictureBox1.Margin = new System.Windows.Forms.Padding(2);
             this.PictureBox1.Name = "PictureBox1";
-            this.PictureBox1.Size = new System.Drawing.Size(64, 64);
+            this.PictureBox1.Size = new System.Drawing.Size(66, 65);
             this.PictureBox1.TabIndex = 0;
             this.PictureBox1.TabStop = false;
             // 
@@ -273,9 +278,11 @@ namespace ForceConnector
             // 
             this.grpAPI.Controls.Add(this._SOAPAPI);
             this.grpAPI.Controls.Add(this._RESTFULAPI);
-            this.grpAPI.Location = new System.Drawing.Point(260, 4);
+            this.grpAPI.Location = new System.Drawing.Point(307, 11);
+            this.grpAPI.Margin = new System.Windows.Forms.Padding(2);
             this.grpAPI.Name = "grpAPI";
-            this.grpAPI.Size = new System.Drawing.Size(124, 69);
+            this.grpAPI.Padding = new System.Windows.Forms.Padding(2);
+            this.grpAPI.Size = new System.Drawing.Size(130, 75);
             this.grpAPI.TabIndex = 18;
             this.grpAPI.TabStop = false;
             this.grpAPI.Text = "Using API";
@@ -284,7 +291,8 @@ namespace ForceConnector
             // 
             this._SOAPAPI.AutoSize = true;
             this._SOAPAPI.Enabled = false;
-            this._SOAPAPI.Location = new System.Drawing.Point(5, 42);
+            this._SOAPAPI.Location = new System.Drawing.Point(14, 44);
+            this._SOAPAPI.Margin = new System.Windows.Forms.Padding(2);
             this._SOAPAPI.Name = "_SOAPAPI";
             this._SOAPAPI.Size = new System.Drawing.Size(93, 21);
             this._SOAPAPI.TabIndex = 1;
@@ -297,7 +305,8 @@ namespace ForceConnector
             // 
             this._RESTFULAPI.AutoSize = true;
             this._RESTFULAPI.Checked = true;
-            this._RESTFULAPI.Location = new System.Drawing.Point(5, 20);
+            this._RESTFULAPI.Location = new System.Drawing.Point(14, 21);
+            this._RESTFULAPI.Margin = new System.Windows.Forms.Padding(2);
             this._RESTFULAPI.Name = "_RESTFULAPI";
             this._RESTFULAPI.Size = new System.Drawing.Size(109, 21);
             this._RESTFULAPI.TabIndex = 0;
@@ -308,8 +317,9 @@ namespace ForceConnector
             // 
             // frmLogin
             // 
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(396, 311);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(449, 369);
             this.Controls.Add(this.grpAPI);
             this.Controls.Add(this.responseBox);
             this.Controls.Add(this._btnNext);
@@ -329,7 +339,7 @@ namespace ForceConnector
             this.Controls.Add(this.PictureBox1);
             this.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmLogin";

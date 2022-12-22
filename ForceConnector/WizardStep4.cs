@@ -4,12 +4,14 @@ using System.Data;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 using Microsoft.VisualBasic.CompilerServices;
+using Microsoft.Office.Interop.Excel;
+using DataTable = System.Data.DataTable;
 
 namespace ForceConnector
 {
     public partial class frmWizardStep4
     {
-        public frmWizardStep4(ref Dictionary<string, RESTful.Field> mapField, Excel.Range rng)
+        public frmWizardStep4(Dictionary<string, RESTful.Field> mapField, Excel.Range rng)
         {
             var fieldTable = new DataTable();
             {
@@ -73,11 +75,25 @@ namespace ForceConnector
             var dr = dt.Rows[cmbField.SelectedIndex];
             if (cmbField.SelectedValue is null | cmbOperator.SelectedItem is null)
             {
-                MessageBox.Show("You must select the Field and Operator.");
+                MessageBox.Show($"You must select the Field and Operator.");
                 return;
             }
 
             AddClause(dr, cmbOperator.SelectedItem, txtValue.Text);
+        }
+
+        private void ClearTopRowColumns()
+        {
+            Range rn = rngOrigin;
+            while (true) {
+                rn.Clear();
+                rn = rn.Next;
+                if (rn == null || (rn.Comment == null && rn.Value == null))
+                {
+                    break;
+                }
+            }
+
         }
 
         private void btnClearClause_Click(object sender, EventArgs e)
@@ -93,8 +109,7 @@ namespace ForceConnector
         private void btnClearAll_Click(object sender, EventArgs e)
         {
             lstClause.Clear();
-            rngOrigin.EntireRow.Clear();
-            rngOrigin.EntireRow.ClearComments();
+            ClearTopRowColumns();
             rngOrigin.Value = objectLabel;
             rngOrigin.AddComment(); // error when already has comment
             rngOrigin.Comment.Text(objectName);
@@ -109,8 +124,7 @@ namespace ForceConnector
 
         private void btnRunQuery_Click(object sender, EventArgs e)
         {
-            rngOrigin.EntireRow.Clear();
-            rngOrigin.EntireRow.ClearComments();
+            ClearTopRowColumns();
             rngOrigin.Value= objectLabel;
             rngOrigin.AddComment(); // error when already has comment
             rngOrigin.Comment.Text(objectName);

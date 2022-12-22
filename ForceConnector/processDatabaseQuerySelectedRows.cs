@@ -38,34 +38,22 @@ namespace ForceConnector
                 lblMessage.ForeColor = System.Drawing.Color.Black;
                 statusText = "";
 
-                // ' these properties should be set to True (at design-time or runtime) before calling the RunWorkerAsync
-                // ' to ensure that it supports Cancellation and reporting Progress
                 bgw.WorkerSupportsCancellation = true;
                 bgw.WorkerReportsProgress = true;
 
-                // ' call this method to start your asynchronous Task.
                 bgw.RunWorkerAsync();
-                goto done;
             }
             catch (Exception ex)
             {
                 statusText = ex.Message;
-            }
-
-        errors:
-            ;
-            if (!string.IsNullOrEmpty(statusText))
-            {
                 progressDownload.Value = 100;
                 lblMessage.Font = new System.Drawing.Font(lblMessage.Font, System.Drawing.FontStyle.Bold);
                 lblMessage.ForeColor = System.Drawing.Color.Red;
                 lblMessage.Text = statusText;
                 btnAction.Text = "Done";
                 btnAction.Enabled = true;
-            }
 
-        done:
-            ;
+            }
         }
 
         private void btnAction_Click(object sender, EventArgs e)

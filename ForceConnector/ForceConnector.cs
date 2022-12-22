@@ -27,7 +27,7 @@ namespace ForceConnector
         public static Excel.Workbook workbook;
         public static Excel.Worksheet worksheet;
         public static string op;
-        private static bool logined = false;
+        private static bool loggedIn = false;
 
         public static void setActiveSheet()
         {
@@ -43,7 +43,7 @@ namespace ForceConnector
             var loginForm = new frmLogin();
             loginForm.ShowDialog();
             LoginToSalesforceRet = loginForm.getSuccess();
-            logined = LoginToSalesforceRet;
+            loggedIn = LoginToSalesforceRet;
             loginForm.Dispose();
             return LoginToSalesforceRet;
         }
@@ -86,7 +86,7 @@ namespace ForceConnector
         {
             try
             {
-                if (!logined)
+                if (!loggedIn)
                 {
                     if (!LoginToSalesforce())
                     {
@@ -132,10 +132,10 @@ namespace ForceConnector
 
         public static void LogoutFrom()
         {
-            logined = false;
+            loggedIn = false;
             if (Util.checkSession())
             {
-                MessageBox.Show("Session alived, logout from Salesforce!");
+                MessageBox.Show("Session alive, logging out from Salesforce!");
                 ThisAddIn.soapClient.logout(ThisAddIn.soapSessionHeader, ThisAddIn.soapCallOptions);
                 ThisAddIn.soapClient = null;
                 ThisAddIn.metaClient = null;

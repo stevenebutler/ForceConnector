@@ -81,7 +81,7 @@ namespace ForceConnector
             Groups = null;
             if (Util.checkSession())
             {
-                MessageBox.Show("Session alived, logout from Salesforce!");
+                //MessageBox.Show("Session alive, logging out from Salesforce!");
                 soapClient.logout(soapSessionHeader, soapCallOptions);
             }
         }

@@ -34,130 +34,131 @@ namespace ForceConnector
         [System.Diagnostics.DebuggerStepThrough()]
         private void InitializeComponent()
         {
-            lstObject = new System.Windows.Forms.ListView();
-            _btnNext = new System.Windows.Forms.Button();
-            _btnNext.Click += new EventHandler(btnNext_Click);
-            _btnCancel = new System.Windows.Forms.Button();
-            _btnCancel.Click += new EventHandler(btnCancel_Click);
-            lblSelectTable = new System.Windows.Forms.Label();
-            _chkStandard = new System.Windows.Forms.CheckBox();
-            _chkStandard.CheckedChanged += new EventHandler(chkStandard_CheckedChanged);
-            _chkCustom = new System.Windows.Forms.CheckBox();
-            _chkCustom.CheckedChanged += new EventHandler(chkCustom_CheckedChanged);
-            _chkSystem = new System.Windows.Forms.CheckBox();
-            _chkSystem.CheckedChanged += new EventHandler(chkSystem_CheckedChanged);
-            _cmbLang = new System.Windows.Forms.ComboBox();
-            _cmbLang.SelectedIndexChanged += new EventHandler(cmbLang_SelectedIndexChanged);
-            lblSelectLang = new System.Windows.Forms.Label();
-            SuspendLayout();
+            this.lstObject = new System.Windows.Forms.ListView();
+            this._btnNext = new System.Windows.Forms.Button();
+            this._btnCancel = new System.Windows.Forms.Button();
+            this.lblSelectTable = new System.Windows.Forms.Label();
+            this._chkStandard = new System.Windows.Forms.CheckBox();
+            this._chkCustom = new System.Windows.Forms.CheckBox();
+            this._chkSystem = new System.Windows.Forms.CheckBox();
+            this._cmbLang = new System.Windows.Forms.ComboBox();
+            this.lblSelectLang = new System.Windows.Forms.Label();
+            this.SuspendLayout();
             // 
             // lstObject
             // 
-            lstObject.HideSelection = false;
-            lstObject.Location = new System.Drawing.Point(16, 68);
-            lstObject.Name = "lstObject";
-            lstObject.Size = new System.Drawing.Size(465, 440);
-            lstObject.TabIndex = 10;
-            lstObject.UseCompatibleStateImageBehavior = false;
+            this.lstObject.HideSelection = false;
+            this.lstObject.Location = new System.Drawing.Point(16, 68);
+            this.lstObject.Name = "lstObject";
+            this.lstObject.Size = new System.Drawing.Size(465, 440);
+            this.lstObject.TabIndex = 10;
+            this.lstObject.UseCompatibleStateImageBehavior = false;
             // 
-            // btnNext
+            // _btnNext
             // 
-            _btnNext.Location = new System.Drawing.Point(270, 559);
-            _btnNext.Name = "_btnNext";
-            _btnNext.Size = new System.Drawing.Size(100, 30);
-            _btnNext.TabIndex = 9;
-            _btnNext.Text = "Next >";
-            _btnNext.UseVisualStyleBackColor = true;
+            this._btnNext.Location = new System.Drawing.Point(270, 559);
+            this._btnNext.Name = "_btnNext";
+            this._btnNext.Size = new System.Drawing.Size(100, 30);
+            this._btnNext.TabIndex = 9;
+            this._btnNext.Text = "Next >";
+            this._btnNext.UseVisualStyleBackColor = true;
+            this._btnNext.Click += new System.EventHandler(this.btnNext_Click);
             // 
-            // btnCancel
+            // _btnCancel
             // 
-            _btnCancel.Location = new System.Drawing.Point(125, 559);
-            _btnCancel.Name = "_btnCancel";
-            _btnCancel.Size = new System.Drawing.Size(100, 30);
-            _btnCancel.TabIndex = 7;
-            _btnCancel.Text = "Cancel";
-            _btnCancel.UseVisualStyleBackColor = true;
+            this._btnCancel.Location = new System.Drawing.Point(125, 559);
+            this._btnCancel.Name = "_btnCancel";
+            this._btnCancel.Size = new System.Drawing.Size(100, 30);
+            this._btnCancel.TabIndex = 7;
+            this._btnCancel.Text = "Cancel";
+            this._btnCancel.UseVisualStyleBackColor = true;
+            this._btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // lblSelectTable
             // 
-            lblSelectTable.Location = new System.Drawing.Point(17, 14);
-            lblSelectTable.Name = "lblSelectTable";
-            lblSelectTable.Size = new System.Drawing.Size(217, 16);
-            lblSelectTable.TabIndex = 6;
-            lblSelectTable.Text = "Select the Objects to Describe :";
-            lblSelectTable.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblSelectTable.Location = new System.Drawing.Point(17, 14);
+            this.lblSelectTable.Name = "lblSelectTable";
+            this.lblSelectTable.Size = new System.Drawing.Size(217, 16);
+            this.lblSelectTable.TabIndex = 6;
+            this.lblSelectTable.Text = "Select the Objects to Describe :";
+            this.lblSelectTable.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // chkStandard
+            // _chkStandard
             // 
-            _chkStandard.AutoSize = true;
-            _chkStandard.Checked = true;
-            _chkStandard.CheckState = System.Windows.Forms.CheckState.Checked;
-            _chkStandard.Location = new System.Drawing.Point(19, 42);
-            _chkStandard.Name = "_chkStandard";
-            _chkStandard.Size = new System.Drawing.Size(136, 18);
-            _chkStandard.TabIndex = 11;
-            _chkStandard.Text = "Standard Objects";
-            _chkStandard.UseVisualStyleBackColor = true;
+            this._chkStandard.AutoSize = true;
+            this._chkStandard.Checked = true;
+            this._chkStandard.CheckState = System.Windows.Forms.CheckState.Checked;
+            this._chkStandard.Location = new System.Drawing.Point(19, 42);
+            this._chkStandard.Name = "_chkStandard";
+            this._chkStandard.Size = new System.Drawing.Size(136, 18);
+            this._chkStandard.TabIndex = 11;
+            this._chkStandard.Text = "Standard Objects";
+            this._chkStandard.UseVisualStyleBackColor = true;
+            this._chkStandard.CheckedChanged += new System.EventHandler(this.chkStandard_CheckedChanged);
             // 
-            // chkCustom
+            // _chkCustom
             // 
-            _chkCustom.AutoSize = true;
-            _chkCustom.Checked = true;
-            _chkCustom.CheckState = System.Windows.Forms.CheckState.Checked;
-            _chkCustom.Location = new System.Drawing.Point(181, 42);
-            _chkCustom.Name = "_chkCustom";
-            _chkCustom.Size = new System.Drawing.Size(126, 18);
-            _chkCustom.TabIndex = 12;
-            _chkCustom.Text = "Custom Objects";
-            _chkCustom.UseVisualStyleBackColor = true;
+            this._chkCustom.AutoSize = true;
+            this._chkCustom.Checked = true;
+            this._chkCustom.CheckState = System.Windows.Forms.CheckState.Checked;
+            this._chkCustom.Location = new System.Drawing.Point(181, 42);
+            this._chkCustom.Name = "_chkCustom";
+            this._chkCustom.Size = new System.Drawing.Size(126, 18);
+            this._chkCustom.TabIndex = 12;
+            this._chkCustom.Text = "Custom Objects";
+            this._chkCustom.UseVisualStyleBackColor = true;
+            this._chkCustom.CheckedChanged += new System.EventHandler(this.chkCustom_CheckedChanged);
             // 
-            // chkSystem
+            // _chkSystem
             // 
-            _chkSystem.AutoSize = true;
-            _chkSystem.Location = new System.Drawing.Point(342, 42);
-            _chkSystem.Name = "_chkSystem";
-            _chkSystem.Size = new System.Drawing.Size(124, 18);
-            _chkSystem.TabIndex = 13;
-            _chkSystem.Text = "System Objects";
-            _chkSystem.UseVisualStyleBackColor = true;
+            this._chkSystem.AutoSize = true;
+            this._chkSystem.Location = new System.Drawing.Point(342, 42);
+            this._chkSystem.Name = "_chkSystem";
+            this._chkSystem.Size = new System.Drawing.Size(124, 18);
+            this._chkSystem.TabIndex = 13;
+            this._chkSystem.Text = "System Objects";
+            this._chkSystem.UseVisualStyleBackColor = true;
+            this._chkSystem.CheckedChanged += new System.EventHandler(this.chkSystem_CheckedChanged);
             // 
-            // cmbLang
+            // _cmbLang
             // 
-            _cmbLang.FormattingEnabled = true;
-            _cmbLang.Location = new System.Drawing.Point(186, 524);
-            _cmbLang.Name = "_cmbLang";
-            _cmbLang.Size = new System.Drawing.Size(197, 22);
-            _cmbLang.TabIndex = 14;
+            this._cmbLang.FormattingEnabled = true;
+            this._cmbLang.Location = new System.Drawing.Point(186, 524);
+            this._cmbLang.Name = "_cmbLang";
+            this._cmbLang.Size = new System.Drawing.Size(295, 22);
+            this._cmbLang.TabIndex = 14;
+            this._cmbLang.SelectedIndexChanged += new System.EventHandler(this.cmbLang_SelectedIndexChanged);
             // 
             // lblSelectLang
             // 
-            lblSelectLang.AutoSize = true;
-            lblSelectLang.Location = new System.Drawing.Point(20, 527);
-            lblSelectLang.Name = "lblSelectLang";
-            lblSelectLang.Size = new System.Drawing.Size(156, 14);
-            lblSelectLang.TabIndex = 15;
-            lblSelectLang.Text = "Select Base Language :";
+            this.lblSelectLang.AutoSize = true;
+            this.lblSelectLang.Location = new System.Drawing.Point(20, 527);
+            this.lblSelectLang.Name = "lblSelectLang";
+            this.lblSelectLang.Size = new System.Drawing.Size(156, 14);
+            this.lblSelectLang.TabIndex = 15;
+            this.lblSelectLang.Text = "Select Base Language :";
             // 
             // frmObjectList
             // 
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            ClientSize = new System.Drawing.Size(497, 601);
-            Controls.Add(lblSelectLang);
-            Controls.Add(_cmbLang);
-            Controls.Add(_chkSystem);
-            Controls.Add(_chkCustom);
-            Controls.Add(_chkStandard);
-            Controls.Add(lstObject);
-            Controls.Add(_btnNext);
-            Controls.Add(_btnCancel);
-            Controls.Add(lblSelectTable);
-            Font = new System.Drawing.Font("Verdana", 9.0f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, Conversions.ToByte(0));
-            Name = "frmObjectList";
-            Text = "Describe SObjects";
-            TopMost = true;
-            Load += new EventHandler(frmObjectList_Load);
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.ClientSize = new System.Drawing.Size(497, 601);
+            this.Controls.Add(this.lblSelectLang);
+            this.Controls.Add(this._cmbLang);
+            this.Controls.Add(this._chkSystem);
+            this.Controls.Add(this._chkCustom);
+            this.Controls.Add(this._chkStandard);
+            this.Controls.Add(this.lstObject);
+            this.Controls.Add(this._btnNext);
+            this.Controls.Add(this._btnCancel);
+            this.Controls.Add(this.lblSelectTable);
+            this.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Name = "frmObjectList";
+            this.Text = "Describe SObjects";
+            this.TopMost = true;
+            this.Load += new System.EventHandler(this.frmObjectList_Load);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         internal System.Windows.Forms.ListView lstObject;

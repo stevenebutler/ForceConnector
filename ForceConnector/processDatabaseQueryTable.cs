@@ -6,6 +6,7 @@ using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ForceConnector
 {
@@ -78,8 +79,11 @@ namespace ForceConnector
             // ' The asynchronous task you want to perform goes here
             // ' the following is an example of how it typically goes.
             long outrow = 0L;
+            var sw = new Stopwatch();
+            sw.Start();
             try
             {
+
                 excelApp = ThisAddIn.excelApp;
                 workbook = excelApp.ActiveWorkbook;
                 worksheet = (Excel.Worksheet)workbook.ActiveSheet;
@@ -109,7 +113,7 @@ namespace ForceConnector
                 {
                     goto errors;
                 }
-                
+
                 // Debug.Print "select " && sels && " from " && g_objectType
                 // Debug.Print " " && where
 
@@ -206,7 +210,7 @@ namespace ForceConnector
             }
 
         done:
-            excelApp.StatusBar = $"Query : drawing complete, {outrow} total rows returned";
+            excelApp.StatusBar = $"Query : drawing complete, {outrow} total rows returned in {sw.Elapsed}";
             excelApp.ScreenUpdating = true;
         }
 

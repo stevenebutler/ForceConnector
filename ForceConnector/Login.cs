@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using ForceConnector.MiniMETA;
 using ForceConnector.Partner;
 using Microsoft.VisualBasic;
@@ -52,18 +53,37 @@ namespace ForceConnector
             else
             {
                 btnLogin.Enabled = false;
-                OAuth2.openOAuthLogin(destination);
-                loginCallback();
+
+                try
+                {
+                    using (tokenSource = new CancellationTokenSource())
+                    {
+                        if (OAuth2.openOAuthLogin(destination, tokenSource.Token))
+                        {
+                            loginCallback();
+                        }
+                    }
+                }
+                finally
+                {
+                    tokenSource = null;
+                }
             }
         }
+        private CancellationTokenSource tokenSource = null;
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+            if (tokenSource is not null)
+            {
+                tokenSource.Cancel();
+            }
             Close();
         }
 
         private void btnNext_Click(object sender, EventArgs e)
         {
+            
             ThisAddIn.conInfo = RESTAPI.getConnectionInfo();
             ThisAddIn.api = Conversions.ToDouble(cmbVersion.Text);
             Util.displayUserName(ThisAddIn.conInfo.display_name);
@@ -191,7 +211,7 @@ namespace ForceConnector
             }
             catch (Exception ex)
             {
-                responseBox.Text = "Logined, but can not use SOAP features";
+                responseBox.Text = "Logged in, but can not use SOAP features";
                 Interaction.MsgBox("You can not use 'Translation Helper' at this time" + Constants.vbCrLf + ex.Message + Constants.vbCrLf + ex.StackTrace, Title: "SOAP Client Error!");
             }
             Operation.LastCheckedLogin = DateTime.Now;

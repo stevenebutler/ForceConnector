@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Web.Script.Serialization;
+using System.Windows.Input;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 
@@ -22,8 +24,8 @@ namespace ForceConnector
         private readonly static string UpdateRecordsUrl = "{0}/services/data/v{1}/composite/sobjects"; // PATCH with Content-Type 'application/json', upto 200 records
         private readonly static string UpsertRecordsUrl = "{0}/services/data/v{1}/composite/sobjects/{2}/{3}"; // POST(?)/PATCH with Content-Type 'application/json', upto 200 records
         private readonly static string DeleteRecordsUrl = "{0}/services/data/v{1}/composite/sobjects?ids={2}&allOrNone={3}"; // DELETE, upto 200 records
-
         private static RESTful.DescribeGlobalResult dgr_cache = null;
+        private readonly static Dictionary<string, string> PreventAutoAssign = new Dictionary<string, string> { { "Sforce-Auto-Assign", "False" } };
         public static RESTful.DescribeGlobalSObjectResult[] getSObjectList()
         {
             RESTful.DescribeGlobalResult dgr = dgr_cache;
@@ -43,24 +45,29 @@ namespace ForceConnector
 
             return dgr.sobjects;
         }
-
+        private static RESTful.ConnectionInfo connInfoCache = new();
+        private static DateTime connInfoCacheNeedsUpdating = DateTime.MinValue;
         public static RESTful.ConnectionInfo getConnectionInfo()
         {
-            var describeResult = new RESTful.ConnectionInfo();
-            var jss = new JavaScriptSerializer();
-            string serviceUrl = ThisAddIn.id + "?version=latest";
-            string json = CallREST("GET", serviceUrl);
-            try
+            if (DateTime.Now > connInfoCacheNeedsUpdating)
             {
-                describeResult = jss.Deserialize<RESTful.ConnectionInfo>(json);
+                var jss = new JavaScriptSerializer();
+                string serviceUrl = ThisAddIn.id + "?version=latest";
+                string json = CallREST("GET", serviceUrl);
+                try
+                {
+                    connInfoCache = jss.Deserialize<RESTful.ConnectionInfo>(json);
+                    connInfoCacheNeedsUpdating = DateTime.Now.AddMinutes(1);
+                }
+                catch (Exception ex)
+                {
+                    Interaction.MsgBox(ex.Message, Title: "getConnectionInfo Deserialize Exception");
+                    connInfoCacheNeedsUpdating = DateTime.MinValue;
+                    connInfoCache = new();
+                }
             }
-            catch (Exception ex)
-            {
-                Interaction.MsgBox(ex.Message, Title: "getConnectionInfo Deserialize Exception");
-                // Throw New Exception("getConnectionInfo Deserialize Exception" & vbCrLf & ex.Message)
-            }
+            return connInfoCache;
 
-            return describeResult;
         }
 
         public static RESTful.DescribeGlobalResult DescribeSObjects()
@@ -112,10 +119,10 @@ namespace ForceConnector
         {
             RESTful.QueryResult queryResult;
             var jss = new JavaScriptSerializer();
-            var headers = new Dictionary<string, string>();
-            headers.Add("Sforce-Query-Options", "batchSize=50");
+            // Using the default batch size is multiple times faster than trying
+            // to use a batch size of 50, which lower bounds at 200 as of 22/12/2022
             string serviceUrl = Conversions.ToString(string.Format(QueryRecordsUrl, ThisAddIn.instanceUrl, Version, queryString));
-            string json = CallREST("GET", serviceUrl, headers: headers);
+            string json = CallREST("GET", serviceUrl);
             try
             {
                 queryResult = jss.Deserialize<RESTful.QueryResult>(json);
@@ -133,10 +140,10 @@ namespace ForceConnector
         {
             RESTful.QueryResult queryResult;
             var jss = new JavaScriptSerializer();
-            var headers = new Dictionary<string, string>();
-            headers.Add("Sforce-Query-Options", "batchSize=50");
+            // Using the default batch size is multiple times faster than trying
+            // to use a batch size of 50, which lower bounds at 200 as of 22/12/2022
             string moreUrl = ThisAddIn.instanceUrl + nextQueryUrl;
-            string json = CallREST("GET", moreUrl, headers: headers);
+            string json = CallREST("GET", moreUrl);
             try
             {
                 queryResult = jss.Deserialize<RESTful.QueryResult>(json);
@@ -171,21 +178,17 @@ namespace ForceConnector
             return recordSet;
         }
 
+
         public static RESTful.SaveResult[] CreateRecords(object[] records, bool allOrNone = true)
         {
             RESTful.SaveResult[] saveResults;
             var jss = new JavaScriptSerializer();
-            var headers = new Dictionary<string, string>();
-            if (!RegDB.RegQueryBoolValue(ForceConnector.AUTOASSIGNRULE))
-            {
-                headers.Add("Sforce-Auto-Assign", "False");
-            }
 
             string serviceUrl = Conversions.ToString(string.Format(CreateRecordsUrl, ThisAddIn.instanceUrl, Version));
             var recordset = new RESTful.RecordSet();
             recordset.allOrNone = allOrNone;
             recordset.records = records;
-            string json = CallREST("POST", serviceUrl, jss.Serialize(recordset), headers);
+            string json = CallREST("POST", serviceUrl, jss.Serialize(recordset), RegDB.RegQueryBoolValue(ForceConnector.AUTOASSIGNRULE) ? null : PreventAutoAssign);
             try
             {
                 saveResults = jss.Deserialize<RESTful.SaveResult[]>(json);
@@ -203,17 +206,12 @@ namespace ForceConnector
         {
             RESTful.SaveResult[] saveResults;
             var jss = new JavaScriptSerializer();
-            var headers = new Dictionary<string, string>();
-            if (!RegDB.RegQueryBoolValue(ForceConnector.AUTOASSIGNRULE))
-            {
-                headers.Add("Sforce-Auto-Assign", "False");
-            }
 
             string serviceUrl = Conversions.ToString(string.Format(UpdateRecordsUrl, ThisAddIn.instanceUrl, Version));
             var recordset = new RESTful.RecordSet();
             recordset.allOrNone = allOrNone;
             recordset.records = records;
-            string json = CallREST("PATCH", serviceUrl, jss.Serialize(recordset), headers);
+            string json = CallREST("PATCH", serviceUrl, jss.Serialize(recordset), RegDB.RegQueryBoolValue(ForceConnector.AUTOASSIGNRULE) ? null : PreventAutoAssign);
             try
             {
                 saveResults = jss.Deserialize<RESTful.SaveResult[]>(json);
@@ -231,17 +229,12 @@ namespace ForceConnector
         {
             RESTful.UpsertResult[] upsertResults;
             var jss = new JavaScriptSerializer();
-            var headers = new Dictionary<string, string>();
-            if (!RegDB.RegQueryBoolValue(ForceConnector.AUTOASSIGNRULE))
-            {
-                headers.Add("Sforce-Auto-Assign", "False");
-            }
 
             string serviceUrl = Conversions.ToString(string.Format(UpsertRecordsUrl, ThisAddIn.instanceUrl, Version, objectName, extId));
             var recordset = new RESTful.RecordSet();
             recordset.allOrNone = allOrNone;
             recordset.records = records;
-            string json = CallREST("PATCH", serviceUrl, jss.Serialize(recordset), headers);
+            string json = CallREST("PATCH", serviceUrl, jss.Serialize(recordset), RegDB.RegQueryBoolValue(ForceConnector.AUTOASSIGNRULE) ? null : PreventAutoAssign);
             try
             {
                 upsertResults = jss.Deserialize<RESTful.UpsertResult[]>(json);
@@ -275,36 +268,35 @@ namespace ForceConnector
 
             return deleteResults;
         }
-
-        private static string CallREST(string method, string url, string body = "", Dictionary<string, string> headers = null)
+        private static HttpClient client = new HttpClient(new HttpClientHandler()
         {
-            string jsonstring = "";
-            var client = new HttpClient();
-            var request = new HttpRequestMessage(new HttpMethod(method.ToUpper()), url);
-            var response = new HttpResponseMessage();
+            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+        })
+        {
+            Timeout = TimeSpan.FromMinutes(2),
+        };
+        public static string CallREST(string method, string url, string body = "", Dictionary<string, string> headers = null)
+        {
+            return CallREST(method, url, new StringContent(body, Encoding.UTF8, "application/json"), headers);
+        }
+        public static string CallREST(string method, string url, HttpContent body, Dictionary<string, string> headers = null)
+        {
+            method = method.ToUpper();
+            var request = new HttpRequestMessage(new HttpMethod(method), url);
             try
             {
-                client.Timeout = new TimeSpan(0, 0, 120);
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", ThisAddIn.accessToken);
-                if (headers is object)
+                if (headers is not null && headers.Count > 0)
                 {
-                    if (headers.Count > 0)
+                    foreach (var hdr in headers)
                     {
-                        var keys = headers.Keys;
-                        foreach (string key in keys)
-                        {
-                            string value = headers[key];
-                            request.Headers.Add(key, value);
-                        }
+                        request.Headers.Add(hdr.Key, hdr.Value);
                     }
                 }
 
-                if (method == "POST" | method == "PATCH")
+                if (method == "POST" || method == "PATCH" || method == "PUT")
                 {
-                    var buffer = Encoding.UTF8.GetBytes(body);
-                    var contentBody = new ByteArrayContent(buffer);
-                    contentBody.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    request.Content = contentBody;
+                    request.Content = body;
                 }
             }
             catch (Exception ex)
@@ -314,12 +306,12 @@ namespace ForceConnector
 
             try
             {
-                response = client.SendAsync(request).Result;
+                var response = client.SendAsync(request).GetAwaiter().GetResult();
                 if (response.IsSuccessStatusCode)
                 {
                     try
                     {
-                        jsonstring = response.Content.ReadAsStringAsync().Result;
+                        return response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                     }
                     catch (Exception ex)
                     {
@@ -339,86 +331,8 @@ namespace ForceConnector
                 throw new Exception("CallREST Exception!! " + Constants.vbCrLf + ex.Message);
             }
 
-            return jsonstring;
         }
 
-        public static string CallREST2(string method, string url, string body = "", Dictionary<string, string> headers = null)
-        {
-            string jsonstring = "";
-            var client = new HttpClient();
-            var response = new HttpResponseMessage();
-            try
-            {
-                client.BaseAddress = new Uri(url);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
-                client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "Bearer " + ThisAddIn.accessToken);
-                client.Timeout = new TimeSpan(0, 0, 120);
-                if (headers is object)
-                {
-                    var keys = headers.Keys;
-                    foreach (string key in keys)
-                    {
-                        string value = headers[key];
-                        client.DefaultRequestHeaders.TryAddWithoutValidation(key, value);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("CallREST2 Preperation Exception!! " + Constants.vbCrLf + ex.Message);
-            }
-
-            try
-            {
-                if (method == "GET")
-                {
-                    response = client.GetAsync(url).Result;
-                }
-                else if (method == "POST" | method == "PATCH")
-                {
-                    // Dim content As StringContent = New StringContent(body, Encoding.UTF8, "application/json")
-                    var bytearray = Encoding.UTF8.GetBytes(body);
-                    var content = new ByteArrayContent(bytearray);
-                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    if (method == "PATCH")
-                        url = url + "?_HttpMethod=PATCH";
-                    response = client.PostAsync(url, content).Result;
-                }
-                else if (method == "DELETE")
-                {
-                    response = client.DeleteAsync(url).Result;
-                }
-
-                if (response.IsSuccessStatusCode)
-                {
-                    try
-                    {
-                        jsonstring = response.Content.ReadAsStringAsync().Result;
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception("ReadAsStringAsync Exception!!" + Constants.vbCrLf + ex.Message);
-                        // MsgBox(ex.Message, Title:="Handle Response Exception")
-                    }
-                }
-                else
-                {
-                    throw new Exception("SendAsync Error!! " + Constants.vbCrLf + ((int)response.StatusCode).ToString() + " (" + response.ReasonPhrase + ")");
-                    // MsgBox(response.StatusCode & " (" & response.ReasonPhrase & ")", Title:="CallREST2 Failed!")
-                }
-            }
-
-            // Console.ReadKey()
-            catch (Exception ex)
-            {
-                // MsgBox(ex.Message, Title:="CallREST Exception")
-                throw new Exception("CallREST2 Exception!! " + Constants.vbCrLf + ex.Message);
-            }
-
-            return jsonstring;
-        }
     }
 
     public class RESTful
@@ -596,7 +510,7 @@ namespace ForceConnector
             public string referenceTargetField { get; set; }
             public string[] referenceTo { get; set; }
             public string relationshipName { get; set; }
-            public object relationshipOrder { get; set; } // Real type is Integer, but Integer does not accept NULL value.
+            public int? relationshipOrder { get; set; }
             public bool restrictedDelete { get; set; }
             public bool restrictedPicklist { get; set; }
             public int scale { get; set; }
@@ -678,8 +592,8 @@ namespace ForceConnector
         }
 
         /// <summary>
-    /// RESTful Only Class
-    /// </summary>
+        /// RESTful Only Class
+        /// </summary>
         public class ConnectionInfo
         {
             public string id { get; set; }

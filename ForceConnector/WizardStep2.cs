@@ -69,14 +69,15 @@ namespace ForceConnector
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-            if (lstObject.SelectedItems is null)
+            if (lstObject.SelectedItems is null || lstObject.SelectedItems.Count != 1)
             {
-                MessageBox.Show("You must select a object!");
+                MessageBox.Show("You must select an object!", "Input Error" );
             }
             else
             {
                 var itm = lstObject.SelectedItems[0];
                 rng.Value = itm.SubItems[0].Text;
+                rng.ClearComments();
                 rng.AddComment(); // error when already has comment
                 rng.Comment.Text(itm.SubItems[1].Text);
                 rng.Comment.Shape.Height = 20f;
