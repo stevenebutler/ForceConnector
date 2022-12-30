@@ -48,17 +48,17 @@ namespace ForceConnector
             // lstObject
             // 
             this.lstObject.HideSelection = false;
-            this.lstObject.Location = new System.Drawing.Point(16, 68);
+            this.lstObject.Location = new System.Drawing.Point(16, 88);
             this.lstObject.Name = "lstObject";
-            this.lstObject.Size = new System.Drawing.Size(465, 440);
+            this.lstObject.Size = new System.Drawing.Size(556, 420);
             this.lstObject.TabIndex = 10;
             this.lstObject.UseCompatibleStateImageBehavior = false;
             // 
             // _btnNext
             // 
-            this._btnNext.Location = new System.Drawing.Point(270, 559);
+            this._btnNext.Location = new System.Drawing.Point(472, 577);
             this._btnNext.Name = "_btnNext";
-            this._btnNext.Size = new System.Drawing.Size(100, 30);
+            this._btnNext.Size = new System.Drawing.Size(100, 35);
             this._btnNext.TabIndex = 9;
             this._btnNext.Text = "Next >";
             this._btnNext.UseVisualStyleBackColor = true;
@@ -66,9 +66,9 @@ namespace ForceConnector
             // 
             // _btnCancel
             // 
-            this._btnCancel.Location = new System.Drawing.Point(125, 559);
+            this._btnCancel.Location = new System.Drawing.Point(366, 577);
             this._btnCancel.Name = "_btnCancel";
-            this._btnCancel.Size = new System.Drawing.Size(100, 30);
+            this._btnCancel.Size = new System.Drawing.Size(100, 35);
             this._btnCancel.TabIndex = 7;
             this._btnCancel.Text = "Cancel";
             this._btnCancel.UseVisualStyleBackColor = true;
@@ -78,7 +78,7 @@ namespace ForceConnector
             // 
             this.lblSelectTable.Location = new System.Drawing.Point(17, 14);
             this.lblSelectTable.Name = "lblSelectTable";
-            this.lblSelectTable.Size = new System.Drawing.Size(217, 16);
+            this.lblSelectTable.Size = new System.Drawing.Size(217, 26);
             this.lblSelectTable.TabIndex = 6;
             this.lblSelectTable.Text = "Select the Objects to Describe :";
             this.lblSelectTable.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -88,9 +88,9 @@ namespace ForceConnector
             this._chkStandard.AutoSize = true;
             this._chkStandard.Checked = true;
             this._chkStandard.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._chkStandard.Location = new System.Drawing.Point(19, 42);
+            this._chkStandard.Location = new System.Drawing.Point(14, 56);
             this._chkStandard.Name = "_chkStandard";
-            this._chkStandard.Size = new System.Drawing.Size(136, 18);
+            this._chkStandard.Size = new System.Drawing.Size(191, 26);
             this._chkStandard.TabIndex = 11;
             this._chkStandard.Text = "Standard Objects";
             this._chkStandard.UseVisualStyleBackColor = true;
@@ -101,9 +101,9 @@ namespace ForceConnector
             this._chkCustom.AutoSize = true;
             this._chkCustom.Checked = true;
             this._chkCustom.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._chkCustom.Location = new System.Drawing.Point(181, 42);
+            this._chkCustom.Location = new System.Drawing.Point(211, 56);
             this._chkCustom.Name = "_chkCustom";
-            this._chkCustom.Size = new System.Drawing.Size(126, 18);
+            this._chkCustom.Size = new System.Drawing.Size(178, 26);
             this._chkCustom.TabIndex = 12;
             this._chkCustom.Text = "Custom Objects";
             this._chkCustom.UseVisualStyleBackColor = true;
@@ -112,9 +112,9 @@ namespace ForceConnector
             // _chkSystem
             // 
             this._chkSystem.AutoSize = true;
-            this._chkSystem.Location = new System.Drawing.Point(342, 42);
+            this._chkSystem.Location = new System.Drawing.Point(395, 56);
             this._chkSystem.Name = "_chkSystem";
-            this._chkSystem.Size = new System.Drawing.Size(124, 18);
+            this._chkSystem.Size = new System.Drawing.Size(177, 26);
             this._chkSystem.TabIndex = 13;
             this._chkSystem.Text = "System Objects";
             this._chkSystem.UseVisualStyleBackColor = true;
@@ -123,9 +123,9 @@ namespace ForceConnector
             // _cmbLang
             // 
             this._cmbLang.FormattingEnabled = true;
-            this._cmbLang.Location = new System.Drawing.Point(186, 524);
+            this._cmbLang.Location = new System.Drawing.Point(254, 523);
             this._cmbLang.Name = "_cmbLang";
-            this._cmbLang.Size = new System.Drawing.Size(295, 22);
+            this._cmbLang.Size = new System.Drawing.Size(318, 30);
             this._cmbLang.TabIndex = 14;
             this._cmbLang.SelectedIndexChanged += new System.EventHandler(this.cmbLang_SelectedIndexChanged);
             // 
@@ -134,14 +134,14 @@ namespace ForceConnector
             this.lblSelectLang.AutoSize = true;
             this.lblSelectLang.Location = new System.Drawing.Point(20, 527);
             this.lblSelectLang.Name = "lblSelectLang";
-            this.lblSelectLang.Size = new System.Drawing.Size(156, 14);
+            this.lblSelectLang.Size = new System.Drawing.Size(221, 22);
             this.lblSelectLang.TabIndex = 15;
             this.lblSelectLang.Text = "Select Base Language :";
             // 
             // frmObjectList
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(497, 601);
+            this.ClientSize = new System.Drawing.Size(584, 625);
             this.Controls.Add(this.lblSelectLang);
             this.Controls.Add(this._cmbLang);
             this.Controls.Add(this._chkSystem);

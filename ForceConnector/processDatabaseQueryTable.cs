@@ -172,7 +172,7 @@ namespace ForceConnector
                 var argbgw = bgw;
                 outrow = Operation.queryDataDraw(ref excelApp, ref worksheet, ref g_header, ref g_body, ref g_ids, ref g_objectType, ref g_sfd, sels, where, outrow, ref argbgw);
                 bgw = argbgw;
-                if (outrow <= 1L)
+                if (outrow < 1L)
                     setControlText(lblMessage, "No data returned for this Query");
                 refIds = null;
 

@@ -34,147 +34,148 @@ namespace ForceConnector
         [System.Diagnostics.DebuggerStepThrough()]
         private void InitializeComponent()
         {
-            lblSelectTable = new System.Windows.Forms.Label();
-            _btnCancel = new System.Windows.Forms.Button();
-            _btnCancel.Click += new EventHandler(btnCancel_Click);
-            _btnBack = new System.Windows.Forms.Button();
-            _btnBack.Click += new EventHandler(btnBack_Click);
-            _btnNext = new System.Windows.Forms.Button();
-            _btnNext.Click += new EventHandler(btnNext_Click);
-            _lstObject = new System.Windows.Forms.ListView();
-            _lstObject.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(lstObject_ColumnClick);
-            _chkSystem = new System.Windows.Forms.CheckBox();
-            _chkSystem.CheckedChanged += new EventHandler(chkSystem_CheckedChanged);
-            _chkCustom = new System.Windows.Forms.CheckBox();
-            _chkCustom.CheckedChanged += new EventHandler(chkCustom_CheckedChanged);
-            _chkStandard = new System.Windows.Forms.CheckBox();
-            _chkStandard.CheckedChanged += new EventHandler(chkStandard_CheckedChanged);
-            lblSearch = new System.Windows.Forms.Label();
-            _txtSearch = new System.Windows.Forms.TextBox();
-            _txtSearch.TextChanged += new EventHandler(txtSearch_TextChanged);
-            SuspendLayout();
+            this.lblSelectTable = new System.Windows.Forms.Label();
+            this._btnCancel = new System.Windows.Forms.Button();
+            this._btnBack = new System.Windows.Forms.Button();
+            this._btnNext = new System.Windows.Forms.Button();
+            this._lstObject = new System.Windows.Forms.ListView();
+            this._chkSystem = new System.Windows.Forms.CheckBox();
+            this._chkCustom = new System.Windows.Forms.CheckBox();
+            this._chkStandard = new System.Windows.Forms.CheckBox();
+            this.lblSearch = new System.Windows.Forms.Label();
+            this._txtSearch = new System.Windows.Forms.TextBox();
+            this.SuspendLayout();
             // 
             // lblSelectTable
             // 
-            lblSelectTable.Location = new System.Drawing.Point(14, 16);
-            lblSelectTable.Name = "lblSelectTable";
-            lblSelectTable.Size = new System.Drawing.Size(162, 14);
-            lblSelectTable.TabIndex = 0;
-            lblSelectTable.Text = "Select a Table to Query :";
-            lblSelectTable.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblSelectTable.Location = new System.Drawing.Point(14, 16);
+            this.lblSelectTable.Name = "lblSelectTable";
+            this.lblSelectTable.Size = new System.Drawing.Size(274, 31);
+            this.lblSelectTable.TabIndex = 0;
+            this.lblSelectTable.Text = "Select a Table to Query :";
+            this.lblSelectTable.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // btnCancel
+            // _btnCancel
             // 
-            _btnCancel.Location = new System.Drawing.Point(13, 466);
-            _btnCancel.Name = "_btnCancel";
-            _btnCancel.Size = new System.Drawing.Size(120, 40);
-            _btnCancel.TabIndex = 2;
-            _btnCancel.Text = "Cancel";
-            _btnCancel.UseVisualStyleBackColor = true;
+            this._btnCancel.Location = new System.Drawing.Point(13, 533);
+            this._btnCancel.Name = "_btnCancel";
+            this._btnCancel.Size = new System.Drawing.Size(120, 40);
+            this._btnCancel.TabIndex = 2;
+            this._btnCancel.Text = "Cancel";
+            this._btnCancel.UseVisualStyleBackColor = true;
+            this._btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // btnBack
+            // _btnBack
             // 
-            _btnBack.Location = new System.Drawing.Point(222, 466);
-            _btnBack.Name = "_btnBack";
-            _btnBack.Size = new System.Drawing.Size(120, 40);
-            _btnBack.TabIndex = 3;
-            _btnBack.Text = "< Back";
-            _btnBack.UseVisualStyleBackColor = true;
+            this._btnBack.Location = new System.Drawing.Point(326, 533);
+            this._btnBack.Name = "_btnBack";
+            this._btnBack.Size = new System.Drawing.Size(120, 40);
+            this._btnBack.TabIndex = 3;
+            this._btnBack.Text = "< Back";
+            this._btnBack.UseVisualStyleBackColor = true;
+            this._btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
-            // btnNext
+            // _btnNext
             // 
-            _btnNext.Location = new System.Drawing.Point(358, 466);
-            _btnNext.Name = "_btnNext";
-            _btnNext.Size = new System.Drawing.Size(120, 40);
-            _btnNext.TabIndex = 4;
-            _btnNext.Text = "Next >";
-            _btnNext.UseVisualStyleBackColor = true;
+            this._btnNext.Location = new System.Drawing.Point(452, 533);
+            this._btnNext.Name = "_btnNext";
+            this._btnNext.Size = new System.Drawing.Size(120, 40);
+            this._btnNext.TabIndex = 4;
+            this._btnNext.Text = "Next >";
+            this._btnNext.UseVisualStyleBackColor = true;
+            this._btnNext.Click += new System.EventHandler(this.btnNext_Click);
             // 
-            // lstObject
+            // _lstObject
             // 
-            _lstObject.FullRowSelect = true;
-            _lstObject.HideSelection = false;
-            _lstObject.Location = new System.Drawing.Point(13, 103);
-            _lstObject.Name = "_lstObject";
-            _lstObject.Size = new System.Drawing.Size(465, 349);
-            _lstObject.TabIndex = 5;
-            _lstObject.UseCompatibleStateImageBehavior = false;
+            this._lstObject.FullRowSelect = true;
+            this._lstObject.HideSelection = false;
+            this._lstObject.Location = new System.Drawing.Point(13, 155);
+            this._lstObject.Name = "_lstObject";
+            this._lstObject.Size = new System.Drawing.Size(559, 349);
+            this._lstObject.TabIndex = 5;
+            this._lstObject.UseCompatibleStateImageBehavior = false;
+            this._lstObject.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstObject_ColumnClick);
             // 
-            // chkSystem
+            // _chkSystem
             // 
-            _chkSystem.AutoSize = true;
-            _chkSystem.Location = new System.Drawing.Point(335, 79);
-            _chkSystem.Name = "_chkSystem";
-            _chkSystem.Size = new System.Drawing.Size(124, 18);
-            _chkSystem.TabIndex = 16;
-            _chkSystem.Text = "System Objects";
-            _chkSystem.UseVisualStyleBackColor = true;
+            this._chkSystem.AutoSize = true;
+            this._chkSystem.Location = new System.Drawing.Point(394, 113);
+            this._chkSystem.Name = "_chkSystem";
+            this._chkSystem.Size = new System.Drawing.Size(177, 26);
+            this._chkSystem.TabIndex = 16;
+            this._chkSystem.Text = "System Objects";
+            this._chkSystem.UseVisualStyleBackColor = true;
+            this._chkSystem.CheckedChanged += new System.EventHandler(this.chkSystem_CheckedChanged);
             // 
-            // chkCustom
+            // _chkCustom
             // 
-            _chkCustom.AutoSize = true;
-            _chkCustom.Checked = true;
-            _chkCustom.CheckState = System.Windows.Forms.CheckState.Checked;
-            _chkCustom.Location = new System.Drawing.Point(178, 79);
-            _chkCustom.Name = "_chkCustom";
-            _chkCustom.Size = new System.Drawing.Size(126, 18);
-            _chkCustom.TabIndex = 15;
-            _chkCustom.Text = "Custom Objects";
-            _chkCustom.UseVisualStyleBackColor = true;
+            this._chkCustom.AutoSize = true;
+            this._chkCustom.Checked = true;
+            this._chkCustom.CheckState = System.Windows.Forms.CheckState.Checked;
+            this._chkCustom.Location = new System.Drawing.Point(210, 113);
+            this._chkCustom.Name = "_chkCustom";
+            this._chkCustom.Size = new System.Drawing.Size(178, 26);
+            this._chkCustom.TabIndex = 15;
+            this._chkCustom.Text = "Custom Objects";
+            this._chkCustom.UseVisualStyleBackColor = true;
+            this._chkCustom.CheckedChanged += new System.EventHandler(this.chkCustom_CheckedChanged);
             // 
-            // chkStandard
+            // _chkStandard
             // 
-            _chkStandard.AutoSize = true;
-            _chkStandard.Checked = true;
-            _chkStandard.CheckState = System.Windows.Forms.CheckState.Checked;
-            _chkStandard.Location = new System.Drawing.Point(17, 79);
-            _chkStandard.Name = "_chkStandard";
-            _chkStandard.Size = new System.Drawing.Size(136, 18);
-            _chkStandard.TabIndex = 14;
-            _chkStandard.Text = "Standard Objects";
-            _chkStandard.UseVisualStyleBackColor = true;
+            this._chkStandard.AutoSize = true;
+            this._chkStandard.Checked = true;
+            this._chkStandard.CheckState = System.Windows.Forms.CheckState.Checked;
+            this._chkStandard.Location = new System.Drawing.Point(13, 113);
+            this._chkStandard.Name = "_chkStandard";
+            this._chkStandard.Size = new System.Drawing.Size(191, 26);
+            this._chkStandard.TabIndex = 14;
+            this._chkStandard.Text = "Standard Objects";
+            this._chkStandard.UseVisualStyleBackColor = true;
+            this._chkStandard.CheckedChanged += new System.EventHandler(this.chkStandard_CheckedChanged);
             // 
             // lblSearch
             // 
-            lblSearch.AutoSize = true;
-            lblSearch.Location = new System.Drawing.Point(14, 45);
-            lblSearch.Name = "lblSearch";
-            lblSearch.Size = new System.Drawing.Size(115, 14);
-            lblSearch.TabIndex = 17;
-            lblSearch.Text = "Search sObject : ";
+            this.lblSearch.AutoSize = true;
+            this.lblSearch.Location = new System.Drawing.Point(14, 70);
+            this.lblSearch.Name = "lblSearch";
+            this.lblSearch.Size = new System.Drawing.Size(165, 22);
+            this.lblSearch.TabIndex = 17;
+            this.lblSearch.Text = "Search sObject : ";
             // 
-            // txtSearch
+            // _txtSearch
             // 
-            _txtSearch.Location = new System.Drawing.Point(129, 42);
-            _txtSearch.Name = "_txtSearch";
-            _txtSearch.Size = new System.Drawing.Size(349, 22);
-            _txtSearch.TabIndex = 18;
+            this._txtSearch.Location = new System.Drawing.Point(185, 70);
+            this._txtSearch.Name = "_txtSearch";
+            this._txtSearch.Size = new System.Drawing.Size(374, 29);
+            this._txtSearch.TabIndex = 18;
+            this._txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
             // 
             // frmWizardStep2
             // 
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            ClientSize = new System.Drawing.Size(492, 515);
-            ControlBox = false;
-            Controls.Add(_txtSearch);
-            Controls.Add(lblSearch);
-            Controls.Add(_chkSystem);
-            Controls.Add(_chkCustom);
-            Controls.Add(_chkStandard);
-            Controls.Add(_lstObject);
-            Controls.Add(_btnNext);
-            Controls.Add(_btnBack);
-            Controls.Add(_btnCancel);
-            Controls.Add(lblSelectTable);
-            Font = new System.Drawing.Font("Verdana", 9.0f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, Conversions.ToByte(0));
-            Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            MaximizeBox = false;
-            MinimizeBox = false;
-            Name = "frmWizardStep2";
-            ShowIcon = false;
-            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            Text = "Table Query Wizard - Step 2 of 4";
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.ClientSize = new System.Drawing.Size(584, 585);
+            this.ControlBox = false;
+            this.Controls.Add(this._txtSearch);
+            this.Controls.Add(this.lblSearch);
+            this.Controls.Add(this._chkSystem);
+            this.Controls.Add(this._chkCustom);
+            this.Controls.Add(this._chkStandard);
+            this.Controls.Add(this._lstObject);
+            this.Controls.Add(this._btnNext);
+            this.Controls.Add(this._btnBack);
+            this.Controls.Add(this._btnCancel);
+            this.Controls.Add(this.lblSelectTable);
+            this.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "frmWizardStep2";
+            this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Table Query Wizard - Step 2 of 4";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         internal System.Windows.Forms.Label lblSelectTable;

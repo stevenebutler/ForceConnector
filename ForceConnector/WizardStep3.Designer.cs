@@ -34,83 +34,84 @@ namespace ForceConnector
         [System.Diagnostics.DebuggerStepThrough()]
         private void InitializeComponent()
         {
-            lblSelectFields = new System.Windows.Forms.Label();
-            _btnCancel = new System.Windows.Forms.Button();
-            _btnCancel.Click += new EventHandler(btnCancel_Click);
-            _btnBack = new System.Windows.Forms.Button();
-            _btnBack.Click += new EventHandler(btnBack_Click);
-            _btnNext = new System.Windows.Forms.Button();
-            _btnNext.Click += new EventHandler(btnNext_Click);
-            lstField = new System.Windows.Forms.ListView();
-            SuspendLayout();
+            this.lblSelectFields = new System.Windows.Forms.Label();
+            this._btnCancel = new System.Windows.Forms.Button();
+            this._btnBack = new System.Windows.Forms.Button();
+            this._btnNext = new System.Windows.Forms.Button();
+            this.lstField = new System.Windows.Forms.ListView();
+            this.SuspendLayout();
             // 
             // lblSelectFields
             // 
-            lblSelectFields.AutoSize = true;
-            lblSelectFields.Location = new System.Drawing.Point(14, 16);
-            lblSelectFields.Name = "lblSelectFields";
-            lblSelectFields.Size = new System.Drawing.Size(161, 14);
-            lblSelectFields.TabIndex = 0;
-            lblSelectFields.Text = "Select Fields to Include :";
-            lblSelectFields.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblSelectFields.AutoSize = true;
+            this.lblSelectFields.Location = new System.Drawing.Point(14, 16);
+            this.lblSelectFields.Name = "lblSelectFields";
+            this.lblSelectFields.Size = new System.Drawing.Size(232, 22);
+            this.lblSelectFields.TabIndex = 0;
+            this.lblSelectFields.Text = "Select Fields to Include :";
+            this.lblSelectFields.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // btnCancel
+            // _btnCancel
             // 
-            _btnCancel.Location = new System.Drawing.Point(13, 448);
-            _btnCancel.Name = "_btnCancel";
-            _btnCancel.Size = new System.Drawing.Size(120, 40);
-            _btnCancel.TabIndex = 2;
-            _btnCancel.Text = "Cancel";
-            _btnCancel.UseVisualStyleBackColor = true;
+            this._btnCancel.Location = new System.Drawing.Point(13, 448);
+            this._btnCancel.Name = "_btnCancel";
+            this._btnCancel.Size = new System.Drawing.Size(120, 40);
+            this._btnCancel.TabIndex = 2;
+            this._btnCancel.Text = "Cancel";
+            this._btnCancel.UseVisualStyleBackColor = true;
+            this._btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // btnBack
+            // _btnBack
             // 
-            _btnBack.Location = new System.Drawing.Point(222, 448);
-            _btnBack.Name = "_btnBack";
-            _btnBack.Size = new System.Drawing.Size(120, 40);
-            _btnBack.TabIndex = 3;
-            _btnBack.Text = "< Back";
-            _btnBack.UseVisualStyleBackColor = true;
+            this._btnBack.Location = new System.Drawing.Point(222, 448);
+            this._btnBack.Name = "_btnBack";
+            this._btnBack.Size = new System.Drawing.Size(120, 40);
+            this._btnBack.TabIndex = 3;
+            this._btnBack.Text = "< Back";
+            this._btnBack.UseVisualStyleBackColor = true;
+            this._btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
-            // btnNext
+            // _btnNext
             // 
-            _btnNext.Location = new System.Drawing.Point(358, 448);
-            _btnNext.Name = "_btnNext";
-            _btnNext.Size = new System.Drawing.Size(120, 40);
-            _btnNext.TabIndex = 4;
-            _btnNext.Text = "Next >";
-            _btnNext.UseVisualStyleBackColor = true;
+            this._btnNext.Location = new System.Drawing.Point(358, 448);
+            this._btnNext.Name = "_btnNext";
+            this._btnNext.Size = new System.Drawing.Size(120, 40);
+            this._btnNext.TabIndex = 4;
+            this._btnNext.Text = "Next >";
+            this._btnNext.UseVisualStyleBackColor = true;
+            this._btnNext.Click += new System.EventHandler(this.btnNext_Click);
             // 
             // lstField
             // 
-            lstField.FullRowSelect = true;
-            lstField.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            lstField.HideSelection = false;
-            lstField.Location = new System.Drawing.Point(13, 42);
-            lstField.Name = "lstField";
-            lstField.Size = new System.Drawing.Size(465, 396);
-            lstField.TabIndex = 5;
-            lstField.UseCompatibleStateImageBehavior = false;
+            this.lstField.FullRowSelect = true;
+            this.lstField.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lstField.HideSelection = false;
+            this.lstField.Location = new System.Drawing.Point(13, 67);
+            this.lstField.Name = "lstField";
+            this.lstField.Size = new System.Drawing.Size(465, 371);
+            this.lstField.TabIndex = 5;
+            this.lstField.UseCompatibleStateImageBehavior = false;
             // 
             // frmWizardStep3
             // 
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            ClientSize = new System.Drawing.Size(492, 496);
-            ControlBox = false;
-            Controls.Add(lstField);
-            Controls.Add(_btnNext);
-            Controls.Add(_btnBack);
-            Controls.Add(_btnCancel);
-            Controls.Add(lblSelectFields);
-            Font = new System.Drawing.Font("Verdana", 9.0f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, Conversions.ToByte(0));
-            Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            MaximizeBox = false;
-            MinimizeBox = false;
-            Name = "frmWizardStep3";
-            ShowIcon = false;
-            Text = "Table Query Wizard - Step 3 of 4";
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.ClientSize = new System.Drawing.Size(492, 496);
+            this.ControlBox = false;
+            this.Controls.Add(this.lstField);
+            this.Controls.Add(this._btnNext);
+            this.Controls.Add(this._btnBack);
+            this.Controls.Add(this._btnCancel);
+            this.Controls.Add(this.lblSelectFields);
+            this.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "frmWizardStep3";
+            this.ShowIcon = false;
+            this.Text = "Table Query Wizard - Step 3 of 4";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         internal System.Windows.Forms.Label lblSelectFields;

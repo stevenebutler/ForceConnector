@@ -157,9 +157,9 @@ namespace ForceConnector
             return queryResult;
         }
 
-        public static IDictionary[] RetrieveRecords(string objectName, string[] ids, string[] fields)
+        public static Dictionary<string,object>[] RetrieveRecords(string objectName, string[] ids, string[] fields)
         {
-            IDictionary[] recordSet;
+            Dictionary<string, object>[] recordSet;
             var jss = new JavaScriptSerializer();
             var objectBody = new Dictionary<string, string[]>() { { "ids", ids }, { "fields", fields } };
             string serviceUrl = Conversions.ToString(string.Format(RetrieveRecordsUrl, ThisAddIn.instanceUrl, Version, objectName));
@@ -167,7 +167,7 @@ namespace ForceConnector
             string json = CallREST("POST", serviceUrl, stringBody);
             try
             {
-                recordSet = jss.Deserialize<IDictionary[]>(json);
+                recordSet = jss.Deserialize<Dictionary<string, object>[]>(json);
             }
             catch (Exception ex)
             {
@@ -548,7 +548,7 @@ namespace ForceConnector
         {
             public bool done { get; set; }
             public string nextRecordsUrl { get; set; }
-            public IDictionary[] records { get; set; }
+            public Dictionary<string,object>[] records { get; set; }
             public int totalSize { get; set; }
         }
 

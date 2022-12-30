@@ -34,114 +34,115 @@ namespace ForceConnector
         [System.Diagnostics.DebuggerStepThrough()]
         private void InitializeComponent()
         {
-            chkUseReference = new System.Windows.Forms.CheckBox();
-            chkNoWarning = new System.Windows.Forms.CheckBox();
-            chkNoLimit = new System.Windows.Forms.CheckBox();
-            chkDisableAssignRule = new System.Windows.Forms.CheckBox();
-            chkSkipHidden = new System.Windows.Forms.CheckBox();
-            chkDisableManaged = new System.Windows.Forms.CheckBox();
-            _btnOK = new System.Windows.Forms.Button();
-            _btnOK.Click += new EventHandler(btnOK_Click);
-            SuspendLayout();
+            this.chkUseReference = new System.Windows.Forms.CheckBox();
+            this.chkNoWarning = new System.Windows.Forms.CheckBox();
+            this.chkNoLimit = new System.Windows.Forms.CheckBox();
+            this.chkDisableAssignRule = new System.Windows.Forms.CheckBox();
+            this.chkSkipHidden = new System.Windows.Forms.CheckBox();
+            this.chkDisableManaged = new System.Windows.Forms.CheckBox();
+            this._btnOK = new System.Windows.Forms.Button();
+            this.SuspendLayout();
             // 
             // chkUseReference
             // 
-            chkUseReference.AutoSize = true;
-            chkUseReference.Font = new System.Drawing.Font("Verdana", 9.0f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, Conversions.ToByte(0));
-            chkUseReference.Location = new System.Drawing.Point(12, 14);
-            chkUseReference.Name = "chkUseReference";
-            chkUseReference.Size = new System.Drawing.Size(175, 18);
-            chkUseReference.TabIndex = 14;
-            chkUseReference.Text = "Use Reference Name/Id";
-            chkUseReference.UseVisualStyleBackColor = true;
+            this.chkUseReference.AutoSize = true;
+            this.chkUseReference.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkUseReference.Location = new System.Drawing.Point(12, 14);
+            this.chkUseReference.Name = "chkUseReference";
+            this.chkUseReference.Size = new System.Drawing.Size(252, 26);
+            this.chkUseReference.TabIndex = 14;
+            this.chkUseReference.Text = "Use Reference Name/Id";
+            this.chkUseReference.UseVisualStyleBackColor = true;
             // 
             // chkNoWarning
             // 
-            chkNoWarning.AutoSize = true;
-            chkNoWarning.Font = new System.Drawing.Font("Verdana", 9.0f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, Conversions.ToByte(0));
-            chkNoWarning.Location = new System.Drawing.Point(12, 49);
-            chkNoWarning.Name = "chkNoWarning";
-            chkNoWarning.Size = new System.Drawing.Size(213, 18);
-            chkNoWarning.TabIndex = 15;
-            chkNoWarning.Text = "Not Show Warning Dialog Box";
-            chkNoWarning.UseVisualStyleBackColor = true;
+            this.chkNoWarning.AutoSize = true;
+            this.chkNoWarning.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkNoWarning.Location = new System.Drawing.Point(12, 49);
+            this.chkNoWarning.Name = "chkNoWarning";
+            this.chkNoWarning.Size = new System.Drawing.Size(305, 26);
+            this.chkNoWarning.TabIndex = 15;
+            this.chkNoWarning.Text = "Not Show Warning Dialog Box";
+            this.chkNoWarning.UseVisualStyleBackColor = true;
             // 
             // chkNoLimit
             // 
-            chkNoLimit.AutoSize = true;
-            chkNoLimit.Font = new System.Drawing.Font("Verdana", 9.0f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, Conversions.ToByte(0));
-            chkNoLimit.Location = new System.Drawing.Point(12, 82);
-            chkNoLimit.Name = "chkNoLimit";
-            chkNoLimit.Size = new System.Drawing.Size(118, 18);
-            chkNoLimit.TabIndex = 16;
-            chkNoLimit.Text = "No Query Limit";
-            chkNoLimit.UseVisualStyleBackColor = true;
+            this.chkNoLimit.AutoSize = true;
+            this.chkNoLimit.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkNoLimit.Location = new System.Drawing.Point(12, 82);
+            this.chkNoLimit.Name = "chkNoLimit";
+            this.chkNoLimit.Size = new System.Drawing.Size(172, 26);
+            this.chkNoLimit.TabIndex = 16;
+            this.chkNoLimit.Text = "No Query Limit";
+            this.chkNoLimit.UseVisualStyleBackColor = true;
             // 
             // chkDisableAssignRule
             // 
-            chkDisableAssignRule.AutoSize = true;
-            chkDisableAssignRule.Checked = true;
-            chkDisableAssignRule.CheckState = System.Windows.Forms.CheckState.Checked;
-            chkDisableAssignRule.Font = new System.Drawing.Font("Verdana", 9.0f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, Conversions.ToByte(0));
-            chkDisableAssignRule.Location = new System.Drawing.Point(12, 117);
-            chkDisableAssignRule.Name = "chkDisableAssignRule";
-            chkDisableAssignRule.Size = new System.Drawing.Size(186, 18);
-            chkDisableAssignRule.TabIndex = 17;
-            chkDisableAssignRule.Text = "Supress Auto Assign Rule";
-            chkDisableAssignRule.UseVisualStyleBackColor = true;
+            this.chkDisableAssignRule.AutoSize = true;
+            this.chkDisableAssignRule.Checked = true;
+            this.chkDisableAssignRule.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisableAssignRule.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkDisableAssignRule.Location = new System.Drawing.Point(12, 117);
+            this.chkDisableAssignRule.Name = "chkDisableAssignRule";
+            this.chkDisableAssignRule.Size = new System.Drawing.Size(263, 26);
+            this.chkDisableAssignRule.TabIndex = 17;
+            this.chkDisableAssignRule.Text = "Supress Auto Assign Rule";
+            this.chkDisableAssignRule.UseVisualStyleBackColor = true;
             // 
             // chkSkipHidden
             // 
-            chkSkipHidden.AutoSize = true;
-            chkSkipHidden.Font = new System.Drawing.Font("Verdana", 9.0f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, Conversions.ToByte(0));
-            chkSkipHidden.Location = new System.Drawing.Point(12, 151);
-            chkSkipHidden.Name = "chkSkipHidden";
-            chkSkipHidden.Size = new System.Drawing.Size(197, 18);
-            chkSkipHidden.TabIndex = 18;
-            chkSkipHidden.Text = "Skip Hidden Columns/Rows";
-            chkSkipHidden.UseVisualStyleBackColor = true;
+            this.chkSkipHidden.AutoSize = true;
+            this.chkSkipHidden.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkSkipHidden.Location = new System.Drawing.Point(12, 151);
+            this.chkSkipHidden.Name = "chkSkipHidden";
+            this.chkSkipHidden.Size = new System.Drawing.Size(284, 26);
+            this.chkSkipHidden.TabIndex = 18;
+            this.chkSkipHidden.Text = "Skip Hidden Columns/Rows";
+            this.chkSkipHidden.UseVisualStyleBackColor = true;
             // 
             // chkDisableManaged
             // 
-            chkDisableManaged.AutoSize = true;
-            chkDisableManaged.Checked = true;
-            chkDisableManaged.CheckState = System.Windows.Forms.CheckState.Checked;
-            chkDisableManaged.Font = new System.Drawing.Font("Verdana", 9.0f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, Conversions.ToByte(0));
-            chkDisableManaged.Location = new System.Drawing.Point(12, 185);
-            chkDisableManaged.Name = "chkDisableManaged";
-            chkDisableManaged.Size = new System.Drawing.Size(276, 18);
-            chkDisableManaged.TabIndex = 19;
-            chkDisableManaged.Text = "Not Use Managed Data (for Translation)";
-            chkDisableManaged.UseVisualStyleBackColor = true;
+            this.chkDisableManaged.AutoSize = true;
+            this.chkDisableManaged.Checked = true;
+            this.chkDisableManaged.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisableManaged.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkDisableManaged.Location = new System.Drawing.Point(12, 185);
+            this.chkDisableManaged.Name = "chkDisableManaged";
+            this.chkDisableManaged.Size = new System.Drawing.Size(393, 26);
+            this.chkDisableManaged.TabIndex = 19;
+            this.chkDisableManaged.Text = "Not Use Managed Data (for Translation)";
+            this.chkDisableManaged.UseVisualStyleBackColor = true;
             // 
-            // btnOK
+            // _btnOK
             // 
-            _btnOK.Location = new System.Drawing.Point(119, 221);
-            _btnOK.Name = "_btnOK";
-            _btnOK.Size = new System.Drawing.Size(80, 30);
-            _btnOK.TabIndex = 20;
-            _btnOK.Text = "OK";
-            _btnOK.UseVisualStyleBackColor = true;
+            this._btnOK.Location = new System.Drawing.Point(119, 221);
+            this._btnOK.Name = "_btnOK";
+            this._btnOK.Size = new System.Drawing.Size(80, 30);
+            this._btnOK.TabIndex = 20;
+            this._btnOK.Text = "OK";
+            this._btnOK.UseVisualStyleBackColor = true;
+            this._btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // frmOption
             // 
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            ClientSize = new System.Drawing.Size(318, 260);
-            ControlBox = false;
-            Controls.Add(_btnOK);
-            Controls.Add(chkDisableManaged);
-            Controls.Add(chkSkipHidden);
-            Controls.Add(chkDisableAssignRule);
-            Controls.Add(chkNoLimit);
-            Controls.Add(chkNoWarning);
-            Controls.Add(chkUseReference);
-            Name = "frmOption";
-            ShowIcon = false;
-            ShowInTaskbar = false;
-            Text = "Options";
-            Load += new EventHandler(Options_Load);
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.ClientSize = new System.Drawing.Size(423, 263);
+            this.ControlBox = false;
+            this.Controls.Add(this._btnOK);
+            this.Controls.Add(this.chkDisableManaged);
+            this.Controls.Add(this.chkSkipHidden);
+            this.Controls.Add(this.chkDisableAssignRule);
+            this.Controls.Add(this.chkNoLimit);
+            this.Controls.Add(this.chkNoWarning);
+            this.Controls.Add(this.chkUseReference);
+            this.Name = "frmOption";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.Text = "Options";
+            this.Load += new System.EventHandler(this.Options_Load);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         internal System.Windows.Forms.CheckBox chkUseReference;

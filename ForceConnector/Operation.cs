@@ -1234,7 +1234,7 @@ namespace ForceConnector
                 return Array.Empty<string>();
             }
         }
-        public static void ApplyDataToRange(Excel.Worksheet worksheet, long startRow, int startColumn, List<string> fieldOrder, IDictionary[] objects, RESTful.DescribeSObjectResult g_sfd, int skipColumn = -1)
+        public static void ApplyDataToRange(Excel.Worksheet worksheet, long startRow, int startColumn, List<string> fieldOrder, Dictionary<string, object>[] objects, RESTful.DescribeSObjectResult g_sfd, int skipColumn = -1)
         {
             if (objects.Length <= 0)
             {
@@ -1274,9 +1274,17 @@ namespace ForceConnector
 
                 for (int j = 0; j < fieldOrder.Count; j++)
                 {
-                    if (sob.Contains(fieldOrder[j]))
+
+                    if (sob.TryGetValue(fieldOrder[j], out var obVal))
                     {
-                        data[i, j] = Convert.ToString(sob[fieldOrder[j]]);
+                        if (obVal is Dictionary<string, object> complex)
+                        {
+                            data[i, j] = string.Join(Environment.NewLine, complex.Select(x => $"{x.Key}: {x.Value}"));
+                        }
+                        else
+                        {
+                            data[i, j] = Convert.ToString(obVal);
+                        }
                     }
                 }
             }
