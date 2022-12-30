@@ -53,7 +53,7 @@ namespace ForceConnector
             return interopApi;
         }
 
-        private void ThisAddIn_Startup()
+        private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
             Globals.Ribbons.ForceRibbon.ribbonForceConnector.Label = ribbonBoxName + " (no logon user)";
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -65,7 +65,7 @@ namespace ForceConnector
             Groups = new Dictionary<string, string>();
         }
 
-        private void ThisAddIn_Shutdown()
+        private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
             accessToken = "";
             refreshToken = "";
@@ -85,5 +85,18 @@ namespace ForceConnector
                 soapClient.logout(soapSessionHeader, soapCallOptions);
             }
         }
+        #region VSTO generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InternalStartup()
+        {
+            this.Startup += new System.EventHandler(ThisAddIn_Startup);
+            this.Shutdown += new System.EventHandler(ThisAddIn_Shutdown);
+        }
+
+        #endregion
     }
 }
