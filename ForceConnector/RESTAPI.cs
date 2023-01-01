@@ -119,6 +119,7 @@ namespace ForceConnector
         {
             RESTful.QueryResult queryResult;
             var jss = new JavaScriptSerializer();
+            jss.MaxJsonLength = int.MaxValue;
             // Using the default batch size is multiple times faster than trying
             // to use a batch size of 50, which lower bounds at 200 as of 22/12/2022
             string serviceUrl = Conversions.ToString(string.Format(QueryRecordsUrl, ThisAddIn.instanceUrl, Version, queryString));
@@ -140,6 +141,7 @@ namespace ForceConnector
         {
             RESTful.QueryResult queryResult;
             var jss = new JavaScriptSerializer();
+            jss.MaxJsonLength = int.MaxValue;
             // Using the default batch size is multiple times faster than trying
             // to use a batch size of 50, which lower bounds at 200 as of 22/12/2022
             string moreUrl = ThisAddIn.instanceUrl + nextQueryUrl;

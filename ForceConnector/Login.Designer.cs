@@ -156,15 +156,17 @@ namespace ForceConnector
             this.cmbVersion.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cmbVersion.FormattingEnabled = true;
             this.cmbVersion.Items.AddRange(new object[] {
-            "51",
-            "50",
-            "49",
-            "48"});
+            "56",
+            "55",
+            "54",
+            "53",
+            "52",
+            "51"});
             this.cmbVersion.Location = new System.Drawing.Point(591, 152);
             this.cmbVersion.Name = "cmbVersion";
             this.cmbVersion.Size = new System.Drawing.Size(62, 33);
             this.cmbVersion.TabIndex = 10;
-            this.cmbVersion.Text = "51";
+            this.cmbVersion.Text = "56";
             // 
             // _btnLogin
             // 

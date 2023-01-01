@@ -88,22 +88,16 @@ namespace ForceConnector
                 foreach (Partner.Field fld in fields)
                 {
                     var fldinfo = new Dictionary<string, string>();
-                    if (fieldSet.ContainsKey(fld.name))
+                    if (fieldSet.TryGetValue(fld.name, out var val) && val.description is not null)
                     {
-                        string desc = fieldSet[fld.name].description;
-                        if (desc is object)
-                            fldinfo.Add("desc", desc);
+                        fldinfo.Add("desc", val.description);
                     }
 
                     foreach (string lang in langSet)
                     {
-                        if (fieldTranslation.ContainsKey(lang))
+                        if (fieldTranslation.TryGetValue(lang, out var translation) && translation.TryGetValue(fld.name, out var translationName))
                         {
-                            var trans = fieldTranslation[lang];
-                            if (trans.ContainsKey(fld.name))
-                            {
-                                fldinfo.Add(lang, Conversions.ToString(Interaction.IIf(string.IsNullOrEmpty(trans[fld.name]), fld.label, trans[fld.name])));
-                            }
+                            fldinfo.Add(lang, string.IsNullOrEmpty(translationName) ? fld.label : translationName);
                         }
                     }
 

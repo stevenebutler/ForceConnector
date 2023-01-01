@@ -86,7 +86,6 @@ namespace ForceConnector
 
             try
             {
-                bool hasTranslation = false;
                 excelApp = ThisAddIn.excelApp;
                 workbook = excelApp.ActiveWorkbook;
                 worksheet = (Excel.Worksheet)workbook.ActiveSheet;
@@ -94,8 +93,8 @@ namespace ForceConnector
                 setControlText(btnAction, "Wait...");
                 bgw.ReportProgress(0, "Please wait for initialization to complete...");
                 METAAPI.getTranslations(ref m_langSet);
-                if (m_langSet.Count > 0)
-                    hasTranslation = true;
+                bool hasTranslation = m_langSet.Count > 0;
+
                 var selectObjectsBox = new frmObjectList();
                 selectObjectsBox.langs = m_langSet;
                 if (!hasTranslation)

@@ -13,7 +13,7 @@ namespace ForceConnector
         public const string Ver = "2021/06/01 R0.8";
         public const string USERNAME = "Username";
         public const string AUTHTARGET = "Target";
-        public static double api = 51.0d;
+        public static double api = 56.0d;
         public static string userLang = "";
         public static SoapClient soapClient;
         public static MetadataPortTypeClient metaClient;

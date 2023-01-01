@@ -5,6 +5,7 @@ using ForceConnector.MiniMETA;
 using Excel = Microsoft.Office.Interop.Excel;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
+using System.ServiceModel;
 
 namespace ForceConnector
 {
@@ -1372,26 +1373,35 @@ namespace ForceConnector
 
      
         }
+        public static bool doTranslations = true;
 
         public static void getTranslations(ref List<string> m_langSet)
         {
-            m_langSet = new List<string>();
-            try
+            if (doTranslations)
             {
-                var fileObjs = listMetadata(new[] { "Translations" });
-                if (fileObjs is object)
+                m_langSet = new List<string>();
+                try
                 {
-                    foreach (FileProperties obj in fileObjs)
+                    var fileObjs = listMetadata(new[] { "Translations" });
+                    if (fileObjs is object)
                     {
-                        string fullName = obj.fullName;
-                        if (!m_langSet.Contains(fullName))
-                            m_langSet.Add(fullName);
+                        foreach (FileProperties obj in fileObjs)
+                        {
+                            string fullName = obj.fullName;
+                            if (!m_langSet.Contains(fullName))
+                                m_langSet.Add(fullName);
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                // Throw New Exception("getTranslations" & vbCrLf & ex.Message)
+                catch (FaultException ex)
+                {
+                    if (string.Equals(ex.Code, "sf:INVALID_TYPE"))
+                    {
+                        doTranslations = false;
+                    }
+                    // Throw New Exception("getTranslations" & vbCrLf & ex.Message)
+                }
+                catch (Exception) { }
             }
         }
 
